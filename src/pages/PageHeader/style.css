@@ -1,0 +1,21 @@
+.pageHeader{
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+.welcomeExit{
+  text-align: right;
+  margin-top: 10px;
+}
+.exitLogin{
+  color: #1890ff;
+  margin-left: 30px;
+}
+.exitLogin:hover{
+  cursor: pointer;
+}
+.userName{
+  color: #1890ff;
+}
+.userName:hover{
+  cursor: pointer;
+}

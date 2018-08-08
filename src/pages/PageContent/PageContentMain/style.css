@@ -1,0 +1,9 @@
+.blueTxt {
+  color: #008dff
+}
+.redTxt {
+  color: #f81d22;
+}
+.blueTxt:hover, .redTxt:hover{
+  cursor: pointer;
+}

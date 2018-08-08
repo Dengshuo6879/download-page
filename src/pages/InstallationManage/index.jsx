@@ -1,7 +1,9 @@
 import React from 'react';
 import { Layout, Menu, Icon } from 'antd';
+import PageContent from '../PageContent';
 
 const { Header, Content, Footer, Sider } = Layout;
+const SubMenu = Menu.SubMenu;
 
 export default class InstallationManage extends React.Component {
   render() {
@@ -9,34 +11,21 @@ export default class InstallationManage extends React.Component {
       <Sider
         breakpoint="lg"
         collapsedWidth="0"
+        theme='light'
         onBreakpoint={(broken) => { console.log(broken); }}
         onCollapse={(collapsed, type) => { console.log(collapsed, type); }}
       >
         <div className="logo" />
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
-          <Menu.Item key="1">
-            <Icon type="user" />
-            <span className="nav-text">nav 1</span>
-          </Menu.Item>
-          <Menu.Item key="2">
-            <Icon type="video-camera" />
-            <span className="nav-text">nav 2</span>
-          </Menu.Item>
-          <Menu.Item key="3">
-            <Icon type="upload" />
-            <span className="nav-text">nav 3</span>
-          </Menu.Item>
-          <Menu.Item key="4">
-            <Icon type="user" />
-            <span className="nav-text">nav 4</span>
-          </Menu.Item>
+        <Menu theme="white" mode="inline" defaultSelectedKeys={['']} style={{textAlign: 'center', height: '100%'}}>
+          <SubMenu key="sub1" title={<span>Codecraft</span>}>
+            <Menu.Item key="1">安装包管理</Menu.Item>
+          </SubMenu>
         </Menu>
       </Sider>
       <Layout>
-        <Header style={{ background: '#fff', padding: 0 }} />
-        <Content style={{ margin: '24px 16px 0' }}>
+        <Content>
           <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-            content
+            <PageContent />
         </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}>
