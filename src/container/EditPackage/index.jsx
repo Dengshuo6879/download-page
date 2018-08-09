@@ -40,7 +40,7 @@ class EditPackageForm extends React.Component {
     };
     console.log(this.type)
     return <div style={{ padding: '30px 0 20px' }}>
-      <Row style={{marginBottom: '20px', fontWeight: 'bold'}}>
+      <Row style={{ marginBottom: '20px', fontWeight: 'bold' }}>
         <Col span={3} offset={5}>
           安装包管理
           <span> > </span>
@@ -110,7 +110,7 @@ class EditPackageForm extends React.Component {
       </FormItem>
       <FormItem
         {...formItemLayout}
-        label="安装包"
+        label={type === 'edit' ? '安装包' : '添加安装包'}
       >
         {getFieldDecorator('installation', {
           rules: [{

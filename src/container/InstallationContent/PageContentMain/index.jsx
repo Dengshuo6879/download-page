@@ -131,6 +131,123 @@ export default class PageContentMain extends React.Component {
       "fileEtag": null,
       "createTime": 1533625412000,
       "updateTime": "2018-08-07 15:03:34"
+    }, {
+      key: 3,
+      "id": 3,
+      "versionNo": "v0.0.6",
+      "osTypeStr": "windows",
+      "isForceUpdateStr": "未强制更新",
+      "isPublishStr": "已发布",
+      "description": "增加了XXX能力，优化了XXX性能",
+      "downloadKey": null,
+      "fileSize": null,
+      "fileEtag": null,
+      "createTime": 1533625412000,
+      "updateTime": "2018-08-07 15:03:34"
+    }, {
+      key: 4,
+      "id": 4,
+      "versionNo": "v0.0.6",
+      "osTypeStr": "windows",
+      "isForceUpdateStr": "未强制更新",
+      "isPublishStr": "已发布",
+      "description": "增加了XXX能力，优化了XXX性能",
+      "downloadKey": null,
+      "fileSize": null,
+      "fileEtag": null,
+      "createTime": 1533625412000,
+      "updateTime": "2018-08-07 15:03:34"
+    }, {
+      key: 5,
+      "id": 5,
+      "versionNo": "v0.0.6",
+      "osTypeStr": "windows",
+      "isForceUpdateStr": "未强制更新",
+      "isPublishStr": "已发布",
+      "description": "增加了XXX能力，优化了XXX性能",
+      "downloadKey": null,
+      "fileSize": null,
+      "fileEtag": null,
+      "createTime": 1533625412000,
+      "updateTime": "2018-08-07 15:03:34"
+    }, {
+      key: 6,
+      "id": 6,
+      "versionNo": "v0.0.6",
+      "osTypeStr": "windows",
+      "isForceUpdateStr": "未强制更新",
+      "isPublishStr": "已发布",
+      "description": "增加了XXX能力，优化了XXX性能",
+      "downloadKey": null,
+      "fileSize": null,
+      "fileEtag": null,
+      "createTime": 1533625412000,
+      "updateTime": "2018-08-07 15:03:34"
+    }, {
+      key: 7,
+      "id": 7,
+      "versionNo": "v0.0.6",
+      "osTypeStr": "windows",
+      "isForceUpdateStr": "未强制更新",
+      "isPublishStr": "已发布",
+      "description": "增加了XXX能力，优化了XXX性能",
+      "downloadKey": null,
+      "fileSize": null,
+      "fileEtag": null,
+      "createTime": 1533625412000,
+      "updateTime": "2018-08-07 15:03:34"
+    }, {
+      key: 8,
+      "id": 8,
+      "versionNo": "v0.0.6",
+      "osTypeStr": "windows",
+      "isForceUpdateStr": "未强制更新",
+      "isPublishStr": "已发布",
+      "description": "增加了XXX能力，优化了XXX性能",
+      "downloadKey": null,
+      "fileSize": null,
+      "fileEtag": null,
+      "createTime": 1533625412000,
+      "updateTime": "2018-08-07 15:03:34"
+    }, {
+      key: 9,
+      "id": 9,
+      "versionNo": "v0.0.6",
+      "osTypeStr": "windows",
+      "isForceUpdateStr": "未强制更新",
+      "isPublishStr": "已发布",
+      "description": "增加了XXX能力，优化了XXX性能",
+      "downloadKey": null,
+      "fileSize": null,
+      "fileEtag": null,
+      "createTime": 1533625412000,
+      "updateTime": "2018-08-07 15:03:34"
+    }, {
+      key: 10,
+      "id": 10,
+      "versionNo": "v0.0.6",
+      "osTypeStr": "windows",
+      "isForceUpdateStr": "未强制更新",
+      "isPublishStr": "已发布",
+      "description": "增加了XXX能力，优化了XXX性能",
+      "downloadKey": null,
+      "fileSize": null,
+      "fileEtag": null,
+      "createTime": 1533625412000,
+      "updateTime": "2018-08-07 15:03:34"
+    }, {
+      key: 11,
+      "id": 11,
+      "versionNo": "v0.0.6",
+      "osTypeStr": "windows",
+      "isForceUpdateStr": "未强制更新",
+      "isPublishStr": "已发布",
+      "description": "增加了XXX能力，优化了XXX性能",
+      "downloadKey": null,
+      "fileSize": null,
+      "fileEtag": null,
+      "createTime": 1533625412000,
+      "updateTime": "2018-08-07 15:03:34"
     }];
 
     const { title, modalVisible, content } = this.state;
@@ -138,8 +255,17 @@ export default class PageContentMain extends React.Component {
     const deletePublishedPackage = <span>删除该安装包后，该安装包将不在云端被比对的版本中，您确认删除？</span>;
     const confirmPublishPackage = <span>确认发布后，安装包将上传到云端，用户端将更新为此版本信息，您确认发布？</span>;
     const deleteUnPublishedPackage = <span>确认删除该安装包？</span>;
+
+    const tableParam = {
+      columns: columns,
+      dataSource: data,
+      bordered: true,
+      pagination: {
+        showQuickJumper: true,
+      }
+    };
     return <div>
-      <Table columns={columns} dataSource={data} bordered={true} />
+      <Table {...tableParam}/>
 
       <Modal
         width={650}

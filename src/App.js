@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import {
   BrowserRouter as Router,
@@ -18,10 +17,10 @@ class App extends Component {
         <InstallationHeader />
         <Router>
           <Switch>
-            <Route path='/' exact component={InstallationManage} />
+            <Route path='/codecraft' exact component={InstallationManage} />
             <Route path='/codecraft/:type' exact component={EditPackage} />
 
-            <Redirect to='/' />
+            <Redirect to='/codecraft' />
           </Switch>
         </Router>
       </div>
