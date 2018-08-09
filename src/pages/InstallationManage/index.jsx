@@ -16,7 +16,7 @@ export default class InstallationManage extends React.Component {
         onCollapse={(collapsed, type) => { console.log(collapsed, type); }}
       >
         <div className="logo" />
-        <Menu theme="white" mode="inline" defaultSelectedKeys={['']} style={{textAlign: 'center', height: '100%'}}>
+        <Menu theme="white" mode="inline" defaultSelectedKeys={['1']} defaultOpenKeys={['sub1']} style={{textAlign: 'center', height: '100%'}}>
           <SubMenu key="sub1" title={<span>Codecraft</span>}>
             <Menu.Item key="1">安装包管理</Menu.Item>
           </SubMenu>
@@ -28,8 +28,6 @@ export default class InstallationManage extends React.Component {
             <PageContent />
         </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>
-      </Footer>
       </Layout>
     </Layout>
   }

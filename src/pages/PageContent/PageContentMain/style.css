@@ -7,3 +7,6 @@
 .blueTxt:hover, .redTxt:hover{
   cursor: pointer;
 }
+.marginRight10{
+  margin-right: 10px;
+}

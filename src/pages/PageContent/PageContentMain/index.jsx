@@ -1,8 +1,63 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Progress, Modal } from 'antd';
 import './style.css';
+import EditPackage from './EditPackage';
+import UploadPackage from './UploadPackage';
 
 export default class PageContentMain extends React.Component {
+  state = {
+    title: '',
+    modalVisible: false,
+    content: '',
+  }
+  /**打开删除已发布的包 模态框 */
+  handleDeletePublishedPackage = () => {
+    this.setState({
+      modalVisible: true,
+      title: '提示',
+      content: 'deletePublishedPackage'
+    })
+  }
+  /**打开删除未发布的包 模态框 */
+  handleDeleteUnPublishedPackage = () => {
+    this.setState({
+      modalVisible: true,
+      title: '提示',
+      content: 'deleteUnPublishedPackage'
+    })
+  }
+  /**立即发布确认模态框 */
+  handleConfirmPublishPackage = () => {
+    this.setState({
+      modalVisible: true,
+      title: '提示',
+      content: 'confirmPublishPackage'
+    })
+  }
+  /**打开编辑模态框 */
+  handleEdit = () => {
+    this.setState({
+      modalVisible: true,
+      title: '编辑',
+      content: 'hanldeEdit'
+    })
+  }
+  /**打开上传模态框 */
+  handleUpload = () => {
+    this.setState({
+      modalVisible: true,
+      title: '上传',
+      content: 'handleUpload'
+    })
+  }
+
+  handleModalCancel = () => {
+    this.setState({
+      modalVisible: false,
+      title: '',
+      content: ''
+    })
+  }
   render() {
     const columns = [{
       title: '安装包版本号',
@@ -41,8 +96,12 @@ export default class PageContentMain extends React.Component {
       key: 'package',
       dataIndex: 'package',
       align: 'center',
-      render: () => {
-        return <div>获取文件</div>
+      render: (text) => {
+        return <div>
+          <Progress percent={50} size="small" status="active" style={{ display: 'inline' }} />
+          <span className='blueTxt' className='marginRight10'>暂停</span>
+          <span className='blueTxt' onClick={this.handleDeleteUnPublishedPackage}>删除</span>
+        </div>
       }
     }, {
       title: '状态',
@@ -55,7 +114,11 @@ export default class PageContentMain extends React.Component {
       dataIndex: 'operation',
       align: 'center',
       render: (text, record) => {
-        return <div className='blueTxt'>编辑</div>
+        return <div className='blueTxt'>
+          <span className='blueTxt marginRight10' onClick={this.handleDeletePublishedPackage}>删除</span>
+          <span className='blueTxt marginRight10' onClick={this.handleEdit}>编辑</span>
+          <span className='blueTxt marginRight10' onClick={this.handleConfirmPublishPackage}>立即发布</span>
+        </div>
       }
     }];
 
@@ -85,10 +148,29 @@ export default class PageContentMain extends React.Component {
       "fileEtag": null,
       "createTime": 1533625412000,
       "updateTime": "2018-08-07 15:03:34"
-    },
-    ];
+    }];
+
+    const { title, modalVisible, content } = this.state;
+
+    const deletePublishedPackage = <span>删除该安装包后，该安装包将不在云端被比对的版本中，您确认删除？</span>;
+    const confirmPublishPackage = <span>确认发布后，安装包将上传到云端，用户端将更新为此版本信息，您确认发布？</span>;
+    const deleteUnPublishedPackage = <span>确认删除该安装包？</span>;
     return <div>
-      <Table columns={columns} dataSource={data} bordered={true} align='center' />
+      <Table columns={columns} dataSource={data} bordered={true} align='center'/>
+
+      <Modal
+        visible={modalVisible}
+        title={title}
+        onCancel={this.handleModalCancel}
+        destroyOnClose={true}
+        cancelText={'取消'}
+        okText={'确定'}>
+        {content === 'deletePublishedPackage' && deletePublishedPackage}
+        {content === 'confirmPublishPackage' && confirmPublishPackage}
+        {content === 'deleteUnPublishedPackage' && deleteUnPublishedPackage}
+        {content === 'hanldeEdit' && <EditPackage />}
+        {content === 'handleUpload' && <UploadPackage />}
+      </Modal>
     </div>
   }
 }

@@ -4,6 +4,10 @@ import './style.css';
 const Option = Select.Option;
 
 export default class PageContentHeader extends React.Component {
+
+  handleUpload = () => {
+    this.props.handleUpload();
+  }
   render() {
     return <div style={{marginBottom: '20px'}}>
       <Row>
@@ -29,7 +33,7 @@ export default class PageContentHeader extends React.Component {
         </Col>
 
         <Col span={2} offset={4}>
-          <Button type="primary" ghost><Icon type="plus"/>上传安装包</Button>
+          <Button type="primary" ghost onClick={this.handleUpload}><Icon type="plus"/>上传安装包</Button>
         </Col>
       </Row>
     </div>
