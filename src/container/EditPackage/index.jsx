@@ -38,13 +38,10 @@ class EditPackageForm extends React.Component {
         }
       },
     };
-    console.log(this.type)
     return <div style={{ padding: '30px 0 20px' }}>
-      <Row style={{ marginBottom: '20px', fontWeight: 'bold' }}>
+      <Row style={{ marginBottom: '20px' }}>
         <Col span={3} offset={5}>
-          安装包管理
-          <span> > </span>
-          {type === 'edit' ? '编辑' : '上传安装包'}
+          <span style={{ fontWeight: 'bold' }}>安装包管理</span> > <span style={{ fontWeight: 'bold'}}>{type === 'edit' ? '编辑' : '上传安装包'}</span>
         </Col>
       </Row>
       <FormItem

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Button, Select, Input, Icon } from 'antd';
 import { Link } from 'react-router-dom';
-import './style.css';
+import './style.less';
 const Option = Select.Option;
 
 export default class PageContentHeader extends React.Component {

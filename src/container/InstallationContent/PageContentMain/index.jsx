@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, Progress, Modal } from 'antd';
 import { Link } from 'react-router-dom';
-import './style.css';
+import './style.less';
 
 export default class PageContentMain extends React.Component {
   state = {

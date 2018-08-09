@@ -1,5 +1,5 @@
 import React from 'react';
-import './style.css';
+import './style.less';
 import { Row, Col } from 'antd';
 
 export default class InstallationHeader extends React.Component {
