@@ -1,8 +1,7 @@
 import React from 'react';
 import { Table, Progress, Modal } from 'antd';
+import { Link } from 'react-router-dom';
 import './style.css';
-import EditPackage from './EditPackage';
-import UploadPackage from './UploadPackage';
 
 export default class PageContentMain extends React.Component {
   state = {
@@ -32,22 +31,6 @@ export default class PageContentMain extends React.Component {
       modalVisible: true,
       title: '提示',
       content: 'confirmPublishPackage'
-    })
-  }
-  /**打开编辑模态框 */
-  handleEdit = () => {
-    this.setState({
-      modalVisible: true,
-      title: '编辑',
-      content: 'hanldeEdit'
-    })
-  }
-  /**打开上传模态框 */
-  handleUpload = () => {
-    this.setState({
-      modalVisible: true,
-      title: '上传',
-      content: 'handleUpload'
     })
   }
 
@@ -116,7 +99,7 @@ export default class PageContentMain extends React.Component {
       render: (text, record) => {
         return <div className='blueTxt'>
           <span className='blueTxt marginRight10' onClick={this.handleDeletePublishedPackage}>删除</span>
-          <span className='blueTxt marginRight10' onClick={this.handleEdit}>编辑</span>
+          <span className='blueTxt marginRight10'><Link to='/codecraft/edit'>编辑</Link></span>
           <span className='blueTxt marginRight10' onClick={this.handleConfirmPublishPackage}>立即发布</span>
         </div>
       }
@@ -156,9 +139,10 @@ export default class PageContentMain extends React.Component {
     const confirmPublishPackage = <span>确认发布后，安装包将上传到云端，用户端将更新为此版本信息，您确认发布？</span>;
     const deleteUnPublishedPackage = <span>确认删除该安装包？</span>;
     return <div>
-      <Table columns={columns} dataSource={data} bordered={true} align='center'/>
+      <Table columns={columns} dataSource={data} bordered={true} />
 
       <Modal
+        width={650}
         visible={modalVisible}
         title={title}
         onCancel={this.handleModalCancel}
@@ -168,8 +152,6 @@ export default class PageContentMain extends React.Component {
         {content === 'deletePublishedPackage' && deletePublishedPackage}
         {content === 'confirmPublishPackage' && confirmPublishPackage}
         {content === 'deleteUnPublishedPackage' && deleteUnPublishedPackage}
-        {content === 'hanldeEdit' && <EditPackage />}
-        {content === 'handleUpload' && <UploadPackage />}
       </Modal>
     </div>
   }
