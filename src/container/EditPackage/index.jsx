@@ -2,9 +2,7 @@ import React from 'react';
 import { Form, Button, Input, Select, Upload, Icon, message, Row, Col } from 'antd';
 import $ from 'jquery';
 import { Link } from 'react-router-dom';
-import "whatwg-fetch"
 
-import axios from 'axios';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const Dragger = Upload.Dragger;
@@ -13,48 +11,59 @@ const Option = Select.Option;
 
 class EditPackageForm extends React.Component {
   state = {
-    filePath: ''
+    filePath: '',
+    file: {},
   }
   handleSubmit = () => {
     const { getFieldsValue, validateFields, setFieldsValue } = this.props.form;
     validateFields(
       (err) => {
         if (!err) {
+          // 处理参数
           const params = { ...getFieldsValue() };
-
           const filePath = getFieldsValue()['filename'];
           this.setState({ filePath });
-          const fileNames = filePath.split('\\');
-          const fileName = fileNames[fileNames.length - 1];
-          console.log(fileName)
+          // const fileNames = filePath.split('\\');
+          var fileName = filePath.replace(/.*(\/|\\)/, '');
+          // const fileName = fileNames[fileNames.length - 1];
           params.osType = parseInt(params.osType);
           params.isForceUpdate = parseInt(params.isForceUpdate);
-          params.filename = fileName;
+          params.fileName = fileName;
+          delete params.filename;
 
-          console.log(params);
-          // const jsonStringify = JSON.stringify(params)
-          axios.post("http://120.79.92.22:7888/vmgr/craft/craftPackage",{params}).then(res=>{
-            console.log("56789")
-          })
-          // fetch('http://120.79.92.22:7888/vmgr/craft/craftPackage', {
-          //   method: 'put',
-          //   body: params,
-          //   headers: {
-          //     'Accept': 'application/json',
-          //     'Content-Type': 'application/x-www-form-urlencoded'
-          //   },  
-          //   headers: {
-          //     "Content-Type": "application/x-www-form-urlencoded"
-          //   }
-          // })
-          //   .then(response => response.json())
-          //   .catch(error => console.error('Error:', error))
-          //   .then(response => console.log('Success:', response));
+          const fileType = params.fileName.substring(params.fileName.length - 3);
+          // osType 为 0，--> exe   osType 为 1， --> dmg
+          if ((params.osType === 0 && fileType !== 'exe') || (params.osType === 1 && fileType !== 'dmg')) {
+            message.error('上传安装包类型与选择安装包类型不符，请重新选择');
+            return;
+          }
+
+          // 发起请求
+          fetch('http://120.79.92.22:7888/vmgr/craft/craftPackage', {
+            method: 'PUT',
+            hostname: '120.79.92.22',
+            port: 7888,
+            body: JSON.stringify(params),
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            }
+          }).then(res => {
+            res.json().then(data => {
+              console.log(data);
+              if(data.code === 1000) {
+                message.success('上传成功！')
+                 setTimeout(() => {
+                  this.props.history.push('/codecraft', {data: data.data, file: this.state.file})
+                }, 1000)
+              }
+             })
+          });
         }
       },
     );
   }
-
+  
   showInfo = () => {
     const path = $('#file').val();
     var pos1 = path.lastIndexOf('/');
@@ -65,6 +74,15 @@ class EditPackageForm extends React.Component {
     } else {
       return path.substring(pos + 1);
     }
+  }
+
+  handleFileChange = (e) => {
+    console.log(e.target.value)
+    var file = document.getElementById('file').files[0];
+    console.log(file)
+    this.setState({file: file}, ()=> {
+      console.log(file);
+    });
   }
 
   render() {
@@ -81,18 +99,7 @@ class EditPackageForm extends React.Component {
         sm: { span: 10 },
       },
     };
-    // const props = {
-    //   name: 'file',
-    //   multiple: false,
-    //   // action: '//jsonplaceholder.typicode.com/posts/',
-    //   onChange(info) {
-    //     // setFieldsValue({filename: info.file.name});
 
-    //   },
-    //   beforeUpload: () => {
-    //     return this.handleSubmit;
-    //   }
-    // };
     return <div style={{ padding: '30px 0 20px' }}>
       <Row style={{ marginBottom: '20px' }}>
         <Col span={3} offset={5}>
@@ -178,7 +185,7 @@ class EditPackageForm extends React.Component {
                 <p className="ant-upload-text">点击或拖拽文件到此区域进行添加</p>
                 <p>（大小XXKB以内，XXX格式）</p>
               </Dragger> */}
-              <input type='file' name='file' id='file' />
+              <input type='file' name='file' id='file' onChange={this.handleFileChange} />
             </div>
           )}
         </FormItem>

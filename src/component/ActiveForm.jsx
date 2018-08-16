@@ -5,9 +5,7 @@ const Option = Select.Option;
 
 class ActiveFormForm extends React.Component {
   handleSubmit = () => {
-    const { getFieldsValue } = this.props.form;
-    console.log(getFieldsValue())
-
+    this.props.hanldeGetTableDate();
   }
 
   render() {

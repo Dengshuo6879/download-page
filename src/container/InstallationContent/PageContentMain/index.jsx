@@ -1,23 +1,151 @@
+/* eslint-disable */
 import React from 'react';
-import { Table, Progress, Modal } from 'antd';
+import { Table, Progress, Modal, message } from 'antd';
+import { stringify } from 'querystring';
+import $ from 'jquery';
 import { Link } from 'react-router-dom';
 import './style.less';
 
+import COS from 'cos-js-sdk-v5';
+// import fs from 'fs';
+
+const fs = require('fs');
+
+const config = {
+    Bucket: 'justfortest-1257175416',
+    Region: 'ap-guangzhou'
+};
+// const cos = new COS({
+//     getAuthorization: function (options,callback) {
+//           var method = (options.Method || 'get').toLowerCase();
+//           var key = options.Key || '';
+//           var query = options.Query || {};
+//           var headers = options.Headers || {};
+//           var pathname = key.indexOf('/') === 0 ? key : '/' + key;
+//           var url = 'http://120.79.92.22/vmgr/cos/getFileAuthorization';
+//           var xhr = new XMLHttpRequest();
+//           var data = {
+//               method: method,
+//               pathname: pathname,
+//               query: query,
+//               headers: headers,
+//           };
+//           xhr.open('POST', url, true);
+//           xhr.setRequestHeader('content-type', 'application/json');
+//           xhr.onload = function (e) {
+//               try {
+//                   var AuthData = JSON.parse(e.target.responseText);
+//                   console.log(AuthData, '-----')
+//               } catch (e) {
+
+//               }
+//               callback({
+//                   Authorization: AuthData.Authorization,
+//                   XCosSecurityToken: AuthData.XCosSecurityToken,
+//               });
+//           };
+          
+//           xhr.send(JSON.stringify(data));
+//     }
+// });
+
+// //暂停任务
+// function pauseTask(taskId) {
+//     cos.pauseTask(taskId);
+// }
+
+// //开始任务
+// function restartTask(taskId) {
+//     cos.restartTask(taskId);
+// }
+
+// //上传文件
+// function startUpload() {
+// 	var input = document.createElement('input');
+//     input.type = 'file';
+//     input.onchange = function (e) {
+//         var file = this.files[0]
+//         if (file) {
+        	 	
+//         	var progressId = 8996;
+        	
+//             if (file.size > 100 * 1024 * 1024) {
+//                 cos.sliceUploadFile({
+//                     Bucket: config.Bucket, 
+//                     Region: config.Region,
+//                     Key: file.name,
+//                     Body: file,
+//                   TaskReady: function (taskId) {
+//                       // var TaskId = tid;
+//                       console.log(taskId)
+//                       // appendUploadFile(file.name, progressId, file.size);
+                        
+//                     },
+//                     onHashProgress: function (progressData) {
+//                         //console.log('onHashProgress', JSON.stringify(progressData));
+//                     },
+//                     onProgress: function (progressData) {
+//                     	console.log('onProgress', JSON.stringify(progressData));
+//                     	// $("#progress" + progressId).css("width", parseInt(progressData.percent * 10000) / 100 + "%");
+//                     }
+//                 }, function (err, data) {
+//                     console.log(err || data);
+//                 });
+//             } else {
+//                 cos.putObject({
+//                     Bucket: config.Bucket,
+//                     Region: config.Region,
+//                     Key: file.name,
+//                     Body: file,
+//                     TaskReady: function (taskId) {
+//                       console.log(taskId)
+//                         // appendUploadFile(file.name, progressId, file.size);                    
+//                     },
+//                     onProgress: function (progressData) {
+//                         console.log('onProgress', JSON.stringify(progressData));
+//                         // $("#progress" + progressId).css("width", parseInt(progressData.percent * 10000) / 100 + "%");
+//                     }
+//                 }, function (err, data) {
+//                     console.log(err || data);
+//                 });
+//             }
+//         }
+//     };
+//     input.click();
+// }
+
+
+
+
 export default class PageContentMain extends React.Component {
+
   state = {
     title: '',
     modalVisible: false,
+    craftVerId: '',
     content: '',
+    pageNum: 1,
+    pageSize: 10,
   }
-  /**打开删除已发布的包 模态框 */
-  handleDeletePublishedPackage = () => {
+
+  componentDidMount() {
+    // console.log(this.props.formData, '------');
+    // console.log(this.props.fileSize, '------');
+    // id: "1030018849253552129"  fileName: 'QQ9.0.5.exe'  fileSize: 75172728
+    // startUpload();
+    console.log('fs----', fs)
+  }
+
+  // 打开删除已发布的包 模态框
+  handleDeletePublishedPackage = (record) => {
     this.setState({
       modalVisible: true,
       title: '提示',
-      content: 'deletePublishedPackage'
+      content: 'deletePublishedPackage',
+      craftVerId: record.craftVerId
     })
   }
-  /**打开删除未发布的包 模态框 */
+  // 打开删除未发布的包 模态框
   handleDeleteUnPublishedPackage = () => {
     this.setState({
       modalVisible: true,
@@ -25,7 +153,7 @@ export default class PageContentMain extends React.Component {
       content: 'deleteUnPublishedPackage'
     })
   }
-  /**立即发布确认模态框 */
+  // 立即发布确认模态框
   handleConfirmPublishPackage = () => {
     this.setState({
       modalVisible: true,
@@ -34,12 +162,37 @@ export default class PageContentMain extends React.Component {
     })
   }
 
+  // modal取消
   handleModalCancel = () => {
     this.setState({
       modalVisible: false,
       title: '',
       content: ''
     })
+  }
+
+  // 确认删除
+  handleDelete = () => {
+    const params = {};
+    params.craftVerId = this.state.craftVerId
+    fetch(`http://120.79.92.22:7888/vmgr/craft/craftPackage`, {
+      method: 'DELETE',
+      hostname: '120.79.92.22',
+      port: 7888,
+      body: JSON.stringify(params),
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      }
+    }).then(res => {
+      res.json().then(data => {
+        if (data.code === 1000) {
+          message.success('删除成功');
+          this.setState({ modalVisible: false })
+          this.props.hanldeGetTableDate();
+        }
+      })
+    });
   }
   render() {
     const columns = [{
@@ -79,11 +232,13 @@ export default class PageContentMain extends React.Component {
       key: 'package',
       dataIndex: 'package',
       align: 'center',
-      render: (text) => {
+      render: (text, record) => {
         return <div>
-          <Progress percent={50} size="small" status="active" style={{ display: 'inline' }} />
-          <span className='blueTxt' className='marginRight10'>暂停</span>
-          <span className='blueTxt' onClick={this.handleDeleteUnPublishedPackage}>删除</span>
+          {record.isPublish === 0 ? <div>
+            <Progress percent={50} size="small" status="active" style={{ display: 'inline' }} />
+            <span className='blueTxt' className='marginRight10'>暂停</span>
+          </div> : <div>---</div> }
+         
         </div>
       }
     }, {
@@ -97,158 +252,18 @@ export default class PageContentMain extends React.Component {
       dataIndex: 'operation',
       align: 'center',
       render: (text, record) => {
+        console.log(record, '-=-=-=-=-=-=-=')
         return <div className='blueTxt'>
-          <span className='blueTxt marginRight10' onClick={this.handleDeletePublishedPackage}>删除</span>
-          <span className='blueTxt marginRight10'><Link to='/codecraft/edit'>编辑</Link></span>
-          <span className='blueTxt marginRight10' onClick={this.handleConfirmPublishPackage}>立即发布</span>
+          {record.isPublish === 0 && <span>
+            <span className='blueTxt marginRight10'><Link to='/codecraft/edit'>编辑</Link></span>
+            <span className='blueTxt marginRight10' onClick={this.handleConfirmPublishPackage}>立即发布</span>
+          </span>}
+          <span className='blueTxt marginRight10' onClick={() => this.handleDeletePublishedPackage(record)}>删除</span>
         </div>
       }
     }];
 
-    const data = [{
-      key: 1,
-      "id": 1,
-      "versionNo": "v0.1",
-      "osTypeStr": "mac",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "未发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }, {
-      key: 2,
-      "id": 2,
-      "versionNo": "v0.0.6",
-      "osTypeStr": "windows",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "已发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }, {
-      key: 3,
-      "id": 3,
-      "versionNo": "v0.0.6",
-      "osTypeStr": "windows",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "已发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }, {
-      key: 4,
-      "id": 4,
-      "versionNo": "v0.0.6",
-      "osTypeStr": "windows",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "已发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }, {
-      key: 5,
-      "id": 5,
-      "versionNo": "v0.0.6",
-      "osTypeStr": "windows",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "已发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }, {
-      key: 6,
-      "id": 6,
-      "versionNo": "v0.0.6",
-      "osTypeStr": "windows",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "已发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }, {
-      key: 7,
-      "id": 7,
-      "versionNo": "v0.0.6",
-      "osTypeStr": "windows",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "已发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }, {
-      key: 8,
-      "id": 8,
-      "versionNo": "v0.0.6",
-      "osTypeStr": "windows",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "已发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }, {
-      key: 9,
-      "id": 9,
-      "versionNo": "v0.0.6",
-      "osTypeStr": "windows",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "已发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }, {
-      key: 10,
-      "id": 10,
-      "versionNo": "v0.0.6",
-      "osTypeStr": "windows",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "已发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }, {
-      key: 11,
-      "id": 11,
-      "versionNo": "v0.0.6",
-      "osTypeStr": "windows",
-      "isForceUpdateStr": "未强制更新",
-      "isPublishStr": "已发布",
-      "description": "增加了XXX能力，优化了XXX性能",
-      "downloadKey": null,
-      "fileSize": null,
-      "fileEtag": null,
-      "createTime": 1533625412000,
-      "updateTime": "2018-08-07 15:03:34"
-    }];
+    const data = this.props.tableData.rows;
 
     const { title, modalVisible, content } = this.state;
 
@@ -262,6 +277,14 @@ export default class PageContentMain extends React.Component {
       bordered: true,
       pagination: {
         showQuickJumper: true,
+        total: this.props.tableData.total,
+        onChange: (arg)=> {
+          this.setState({
+            pageNum: arg
+          }, () => {
+          this.props.hanldeGetTableDate();
+          })
+        }
       }
     };
     return <div>
@@ -272,6 +295,9 @@ export default class PageContentMain extends React.Component {
         visible={modalVisible}
         title={title}
         onCancel={this.handleModalCancel}
+        onOk={
+          content === 'deletePublishedPackage' ? this.handleDelete : content === 'confirmPublishPackage' ? this.handlePublish : null
+        }
         destroyOnClose={true}
         cancelText={'取消'}
         okText={'确定'}>

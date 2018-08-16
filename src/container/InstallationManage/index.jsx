@@ -2,10 +2,23 @@ import React from 'react';
 import { Layout, Menu, Icon } from 'antd';
 import InstallationContent from '../InstallationContent';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
 export default class InstallationManage extends React.Component {
+  state = {
+    formData: {},
+    file: {},
+  }
+  componentDidMount() {
+    if (this.props.location.state) {
+      this.setState({
+        formData: this.props.location.state.data,
+        file: this.props.location.state.file,
+      })
+    }
+  }
+
   render() {
     return <Layout>
       <Sider
@@ -25,7 +38,7 @@ export default class InstallationManage extends React.Component {
       <Layout>
         <Content>
           <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-            <InstallationContent />
+            <InstallationContent formData={this.state.formData} file={this.state.file} />
         </div>
         </Content>
       </Layout>

@@ -7,24 +7,29 @@ import './style.less';
 const Option = Select.Option;
 
 export default class PageContentHeader extends React.Component {
+
+  onActiveForm = (ref) => {
+    this.actionForm = ref;
+  }
+
   render() {
     const obj = [{
       type: 'input',
       defaultValue: null,
-      labelTxt: 'oversion',
+      labelTxt: 'versionNo',
       placeholder: '请输入安装包版本号',
     }, {
       type: 'select',
       defaultValue: 'all',
-      labelTxt: 'isForce',
+      labelTxt: 'isForceUpdate',
       opt: [{
         val: 'all',
         txt: '全部属性',
-      }, {
-        val: 'force',
+      },{
+        val: '1',
         txt: '强制升级',
       }, {
-        val: 'unforce',
+        val: '0',
         txt: '非强制升级'
       }]
     }, {
@@ -33,37 +38,34 @@ export default class PageContentHeader extends React.Component {
       labelTxt: 'osType',
       opt: [{
         val: 'all',
-        txt: '全部类型'
-      }, {
-        val: 'mac',
+        txt: '全部类型',
+      },{
+        val: '1',
         txt: 'Mac'
       }, {
-        val: 'windows',
+        val: '0',
         txt: 'Windows'
       }]
     }, {
       type: 'select',
       defaultValue: 'all',
-      labelTxt: 'status',
+      labelTxt: 'isPublish',
       opt: [{
         val: 'all',
         txt: '全部状态'
       }, {
-        val: 'pub',
+        val: '1',
         txt: '已发布'
       }, {
-        val: 'unpub',
+        val: '0',
         txt: '未发布'
-      }, {
-        val: 'del',
-        txt: '已删除'
       }]
     }];
     const layout = 'inline';
     return <div style={{marginBottom: '20px'}}>
       <Row>
         <Col span={18}>
-          <ActionForm obj={obj} layout={layout}/>
+          <ActionForm obj={obj} layout={layout} ref={this.onActiveForm} hanldeGetTableDate={this.props.hanldeGetTableDate} />
         </Col>
 
         <Col span={2} offset={4}>
