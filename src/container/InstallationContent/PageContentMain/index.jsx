@@ -7,115 +7,44 @@ import { Link } from 'react-router-dom';
 import './style.less';
 
 import COS from 'cos-js-sdk-v5';
-// import fs from 'fs';
-
-const fs = require('fs');
 
 const config = {
-    Bucket: 'justfortest-1257175416',
-    Region: 'ap-guangzhou'
+  Bucket: 'justfortest-1257175416',
+  Region: 'ap-guangzhou'
 };
-// const cos = new COS({
-//     getAuthorization: function (options,callback) {
-//           var method = (options.Method || 'get').toLowerCase();
-//           var key = options.Key || '';
-//           var query = options.Query || {};
-//           var headers = options.Headers || {};
-//           var pathname = key.indexOf('/') === 0 ? key : '/' + key;
-//           var url = 'http://120.79.92.22/vmgr/cos/getFileAuthorization';
-//           var xhr = new XMLHttpRequest();
-//           var data = {
-//               method: method,
-//               pathname: pathname,
-//               query: query,
-//               headers: headers,
-//           };
-//           xhr.open('POST', url, true);
-//           xhr.setRequestHeader('content-type', 'application/json');
-//           xhr.onload = function (e) {
-//               try {
-//                   var AuthData = JSON.parse(e.target.responseText);
-//                   console.log(AuthData, '-----')
-//               } catch (e) {
+const cos = new COS({
+  getAuthorization: function (options, callback) {
+    var method = (options.Method || 'get').toLowerCase();
+    var key = options.Key || '';
+    var query = options.Query || {};
+    var headers = options.Headers || {};
+    var pathname = key.indexOf('/') === 0 ? key : '/' + key;
+    var url = 'http://120.79.92.22/vmgr/cos/getFileAuthorization';
+    var xhr = new XMLHttpRequest();
+    var data = {
+      method: method,
+      pathname: pathname,
+      query: query,
+      headers: headers,
+    };
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('content-type', 'application/json');
+    xhr.onload = function (e) {
+      try {
+        var AuthData = JSON.parse(e.target.responseText);
+        console.log(AuthData, '-----')
+      } catch (e) {
+        // ...
+      }
+      callback({
+        Authorization: AuthData.Authorization,
+        XCosSecurityToken: AuthData.XCosSecurityToken,
+      });
+    };
 
-//               }
-//               callback({
-//                   Authorization: AuthData.Authorization,
-//                   XCosSecurityToken: AuthData.XCosSecurityToken,
-//               });
-//           };
-          
-//           xhr.send(JSON.stringify(data));
-//     }
-// });
-
-// //暂停任务
-// function pauseTask(taskId) {
-//     cos.pauseTask(taskId);
-// }
-
-// //开始任务
-// function restartTask(taskId) {
-//     cos.restartTask(taskId);
-// }
-
-// //上传文件
-// function startUpload() {
-// 	var input = document.createElement('input');
-//     input.type = 'file';
-//     input.onchange = function (e) {
-//         var file = this.files[0]
-//         if (file) {
-        	 	
-//         	var progressId = 8996;
-        	
-//             if (file.size > 100 * 1024 * 1024) {
-//                 cos.sliceUploadFile({
-//                     Bucket: config.Bucket, 
-//                     Region: config.Region,
-//                     Key: file.name,
-//                     Body: file,
-//                   TaskReady: function (taskId) {
-//                       // var TaskId = tid;
-//                       console.log(taskId)
-//                       // appendUploadFile(file.name, progressId, file.size);
-                        
-//                     },
-//                     onHashProgress: function (progressData) {
-//                         //console.log('onHashProgress', JSON.stringify(progressData));
-//                     },
-//                     onProgress: function (progressData) {
-//                     	console.log('onProgress', JSON.stringify(progressData));
-//                     	// $("#progress" + progressId).css("width", parseInt(progressData.percent * 10000) / 100 + "%");
-//                     }
-//                 }, function (err, data) {
-//                     console.log(err || data);
-//                 });
-//             } else {
-//                 cos.putObject({
-//                     Bucket: config.Bucket,
-//                     Region: config.Region,
-//                     Key: file.name,
-//                     Body: file,
-//                     TaskReady: function (taskId) {
-//                       console.log(taskId)
-//                         // appendUploadFile(file.name, progressId, file.size);                    
-//                     },
-//                     onProgress: function (progressData) {
-//                         console.log('onProgress', JSON.stringify(progressData));
-//                         // $("#progress" + progressId).css("width", parseInt(progressData.percent * 10000) / 100 + "%");
-//                     }
-//                 }, function (err, data) {
-//                     console.log(err || data);
-//                 });
-//             }
-//         }
-//     };
-//     input.click();
-// }
-
-
-
+    xhr.send(JSON.stringify(data));
+  }
+});
 
 export default class PageContentMain extends React.Component {
 
@@ -128,12 +57,58 @@ export default class PageContentMain extends React.Component {
     pageSize: 10,
   }
 
+  // 开始上传
+  startUpload = (file) => {
+    if (file) {
+      var progressId = 8996;
+
+      if (file.size > 100 * 1024 * 1024) {
+        cos.sliceUploadFile({
+          Bucket: config.Bucket,
+          Region: config.Region,
+          Key: file.name,
+          Body: file,
+          TaskReady: function (taskId) {
+            console.log('taskId--', taskId)
+          },
+          onProgress: function (progressData) {
+            console.log('onProgress', JSON.stringify(progressData));
+          }
+        }, function (err, data) {
+          console.log(err || data);
+        });
+      } else {
+        cos.putObject({
+          Bucket: config.Bucket,
+          Region: config.Region,
+          Key: file.name,
+          Body: file,
+          TaskReady: function (taskId) {
+            console.log('taskId---', taskId)
+          },
+          onProgress: function (progressData) {
+            console.log('onProgress', JSON.stringify(progressData));
+          }
+        }, function (err, data) {
+          console.log(err || data);
+        });
+      }
+    }
+  }
+  // 暂停任务
+  pauseTask = (taskId) => {
+    cos.pauseTask(taskId);
+  }
+  // 重新开始任务
+  restartTask = (taskId) => {
+    cos.restartTask(taskId);
+  }
+
   componentDidMount() {
-    // console.log(this.props.formData, '------');
-    // console.log(this.props.fileSize, '------');
-    // id: "1030018849253552129"  fileName: 'QQ9.0.5.exe'  fileSize: 75172728
-    // startUpload();
-    console.log('fs----', fs)
+    console.log(this.props.formData, 'formdata------');
+    console.log(this.props.file, 'file------');
+
+    this.startUpload(this.props.file);
   }
 
   // 打开删除已发布的包 模态框
@@ -237,8 +212,8 @@ export default class PageContentMain extends React.Component {
           {record.isPublish === 0 ? <div>
             <Progress percent={50} size="small" status="active" style={{ display: 'inline' }} />
             <span className='blueTxt' className='marginRight10'>暂停</span>
-          </div> : <div>---</div> }
-         
+          </div> : <div>---</div>}
+
         </div>
       }
     }, {
@@ -252,7 +227,7 @@ export default class PageContentMain extends React.Component {
       dataIndex: 'operation',
       align: 'center',
       render: (text, record) => {
-        console.log(record, '-=-=-=-=-=-=-=')
+        // console.log(record, '-=-=-=-=-=-=-=')
         return <div className='blueTxt'>
           {record.isPublish === 0 && <span>
             <span className='blueTxt marginRight10'><Link to='/codecraft/edit'>编辑</Link></span>
@@ -278,17 +253,17 @@ export default class PageContentMain extends React.Component {
       pagination: {
         showQuickJumper: true,
         total: this.props.tableData.total,
-        onChange: (arg)=> {
+        onChange: (arg) => {
           this.setState({
             pageNum: arg
           }, () => {
-          this.props.hanldeGetTableDate();
+            this.props.hanldeGetTableDate();
           })
         }
       }
     };
     return <div>
-      <Table {...tableParam}/>
+      <Table {...tableParam} />
 
       <Modal
         width={650}

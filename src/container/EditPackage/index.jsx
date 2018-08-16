@@ -1,11 +1,10 @@
 import React from 'react';
-import { Form, Button, Input, Select, Upload, Icon, message, Row, Col } from 'antd';
+import { Form, Button, Input, Select, message, Row, Col } from 'antd';
 import $ from 'jquery';
 import { Link } from 'react-router-dom';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
-const Dragger = Upload.Dragger;
 const Option = Select.Option;
 
 
@@ -15,7 +14,7 @@ class EditPackageForm extends React.Component {
     file: {},
   }
   handleSubmit = () => {
-    const { getFieldsValue, validateFields, setFieldsValue } = this.props.form;
+    const { getFieldsValue, validateFields } = this.props.form;
     validateFields(
       (err) => {
         if (!err) {
@@ -26,8 +25,8 @@ class EditPackageForm extends React.Component {
           // const fileNames = filePath.split('\\');
           var fileName = filePath.replace(/.*(\/|\\)/, '');
           // const fileName = fileNames[fileNames.length - 1];
-          params.osType = parseInt(params.osType);
-          params.isForceUpdate = parseInt(params.isForceUpdate);
+          params.osType = Math.parseInt(params.osType);
+          params.isForceUpdate = Math.parseInt(params.isForceUpdate);
           params.fileName = fileName;
           delete params.filename;
 
@@ -50,7 +49,7 @@ class EditPackageForm extends React.Component {
             }
           }).then(res => {
             res.json().then(data => {
-              console.log(data);
+              // console.log(data);
               if(data.code === 1000) {
                 message.success('上传成功！')
                  setTimeout(() => {
@@ -77,18 +76,14 @@ class EditPackageForm extends React.Component {
   }
 
   handleFileChange = (e) => {
-    console.log(e.target.value)
     var file = document.getElementById('file').files[0];
-    console.log(file)
-    this.setState({file: file}, ()=> {
-      console.log(file);
-    });
+    this.setState({file: file});
   }
 
   render() {
     const type = this.props.location.pathname.split('/')[2]; //获取路径
 
-    const { getFieldDecorator, setFieldsValue } = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },

@@ -1,10 +1,9 @@
 import React from 'react';
-import { Row, Col, Button, Select, Input, Icon } from 'antd';
+import { Row, Col, Button, Icon } from 'antd';
 import ActionForm from '../../../component/ActiveForm';
 
 import { Link } from 'react-router-dom';
 import './style.less';
-const Option = Select.Option;
 
 export default class PageContentHeader extends React.Component {
 
