@@ -1,9 +1,7 @@
 /* eslint-disable */
 import React from 'react';
 import { Table, Progress, Modal, message } from 'antd';
-import { stringify } from 'querystring';
 import { Link } from 'react-router-dom';
-import $ from 'jquery';
 import './style.less';
 
 import COS from 'cos-js-sdk-v5';
@@ -125,7 +123,7 @@ export default class PageContentMain extends React.Component {
           console.log(err || data);
           const params = {};
           params.craftVerId = this.props.formData.craftVerId;
-          const osType = this.props.formData.osType;
+          const osType = this.props.formData.osTypeStr === 'windows' ? '0' : this.props.formData.osTypeStr === 'mac' ? '1' : null;
           const fileName = file.name;
           params.key = `${osType}/${fileName}`;
 
@@ -145,7 +143,7 @@ export default class PageContentMain extends React.Component {
             method: 'POST',
             hostname: '120.79.92.22',
             port: 7888,
-            body: params,
+            body: JSON.stringify(params),
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
