@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
-import InstallationContent from '../InstallationContent';
+import InstallationContent from './InstallationContent';
 
 const { Content, Sider } = Layout;
 const SubMenu = Menu.SubMenu;

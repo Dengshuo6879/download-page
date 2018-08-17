@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Button, Icon } from 'antd';
-import ActionForm from '../../../component/ActiveForm';
+import ActionForm from '../../../../component/ActiveForm';
 
 import { Link } from 'react-router-dom';
 import './style.less';

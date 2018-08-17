@@ -25,9 +25,9 @@ export default class PageContent extends React.Component {
     const pageValues = this.main.state
     const param = this.state.params;
     param.versionNo = formValues.versionNo ? formValues.versionNo : null;
-    param.isForceUpdate = (formValues.isForceUpdate && formValues.isForceUpdate !== 'all') ? Math.parseInt(formValues.isForceUpdate) : null;
-    param.osType = (formValues.osType && formValues.osType !== 'all') ? Math.parseInt(formValues.osType) : null;
-    param.isPublish = (formValues.isPublish === '0' || formValues.isPublish === '1') ? Math.parseInt(formValues.isPublish) : null;
+    param.isForceUpdate = (formValues.isForceUpdate && formValues.isForceUpdate !== 'all') ? parseInt(formValues.isForceUpdate) : null;
+    param.osType = (formValues.osType && formValues.osType !== 'all') ? parseInt(formValues.osType) : null;
+    param.isPublish = (formValues.isPublish === '0' || formValues.isPublish === '1') ? parseInt(formValues.isPublish) : null;
     param.pageNum = pageValues.pageNum;
     param.pageSize = pageValues.pageSize;
     this.setState({ params: param }, () => {

@@ -25,8 +25,8 @@ class EditPackageForm extends React.Component {
           // const fileNames = filePath.split('\\');
           var fileName = filePath.replace(/.*(\/|\\)/, '');
           // const fileName = fileNames[fileNames.length - 1];
-          params.osType = Math.parseInt(params.osType);
-          params.isForceUpdate = Math.parseInt(params.isForceUpdate);
+          params.osType = parseInt(params.osType);
+          params.isForceUpdate = parseInt(params.isForceUpdate);
           params.fileName = fileName;
           delete params.filename;
 

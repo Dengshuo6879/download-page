@@ -2,8 +2,8 @@
 import React from 'react';
 import { Table, Progress, Modal, message } from 'antd';
 import { stringify } from 'querystring';
-import $ from 'jquery';
 import { Link } from 'react-router-dom';
+import $ from 'jquery';
 import './style.less';
 
 import COS from 'cos-js-sdk-v5';
@@ -55,26 +55,45 @@ export default class PageContentMain extends React.Component {
     content: '',
     pageNum: 1,
     pageSize: 10,
+    uploadProgress: {},
+
+    taskId: 0,
+    percent: 0,
+    uploadSucc: false,
+    puaseTask: false,
   }
 
   // 开始上传
   startUpload = (file) => {
+    // const uploadProgress = this.state.uploadProgress;
     if (file) {
-      var progressId = 8996;
-
       if (file.size > 100 * 1024 * 1024) {
         cos.sliceUploadFile({
           Bucket: config.Bucket,
           Region: config.Region,
           Key: file.name,
           Body: file,
-          TaskReady: function (taskId) {
-            console.log('taskId--', taskId)
+          TaskReady: (taskId) => {
+            // console.log('taskId--', taskId);
+            // uploadProgress.taskId = taskId;
+            this.setState({ taskId })
           },
-          onProgress: function (progressData) {
-            console.log('onProgress', JSON.stringify(progressData));
+          onProgress: (progressData) => {
+            // console.log('onProgress', JSON.parse(JSON.stringify(progressData)).percent);
+            const percent = JSON.parse(JSON.stringify(progressData)).percent;
+            this.setState({ percent })
+
+
+            // uploadProgress.percent = percent;
+            // if(percent !== 1) {
+            //   uploadProgress.progressVisible = true;
+            // } else {
+            //   uploadProgress.progressVisible = false;
+            // }
+            // console.log('uploadProgress----', uploadProgress)
+            // this.setState({ uploadProgress });
           }
-        }, function (err, data) {
+        }, (err, data) => {
           console.log(err || data);
         });
       } else {
@@ -83,14 +102,66 @@ export default class PageContentMain extends React.Component {
           Region: config.Region,
           Key: file.name,
           Body: file,
-          TaskReady: function (taskId) {
-            console.log('taskId---', taskId)
+          TaskReady: (taskId) => {
+            // console.log('taskId---', taskId)
+            this.setState({ taskId })
           },
-          onProgress: function (progressData) {
-            console.log('onProgress', JSON.stringify(progressData));
+          onProgress: (progressData) => {
+            // console.log('onProgress', JSON.parse(JSON.stringify(progressData)).percent);
+            const percent = JSON.parse(JSON.stringify(progressData)).percent;
+            this.setState({ percent })
+
+            // uploadProgress.percent = percent;
+            // if (percent !== 1) {
+            //   uploadProgress.progressVisible = true;
+            // } else {
+            //   uploadProgress.progressVisible = false;
+            // }
+            // console.log('uploadProgress----', uploadProgress)
+            // this.setState({ uploadProgress })
+
           }
-        }, function (err, data) {
+        }, (err, data) => {
           console.log(err || data);
+          const params = {};
+          params.craftVerId = this.props.formData.craftVerId;
+          const osType = this.props.formData.osType;
+          const fileName = file.name;
+          params.key = `${osType}/${fileName}`;
+
+          if (err) {
+            console.log('upload err -----')
+            this.setState({ uploadSucc: false });
+            params.uploadStatus = '0';
+          } else {
+            console.log('upload suc')
+            this.setState({ uploadSucc: true });
+            params.uploadStatus = '1';
+          }
+
+          console.log(params, '--------')
+          // 上传的回调
+          fetch('http://120.79.92.22:7888/vmgr/craft/craftCallback', {
+            method: 'POST',
+            hostname: '120.79.92.22',
+            port: 7888,
+            body: params,
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            }
+          }).then(res => {
+            res.json().then(data => {
+              console.log(data);
+              if (data.code === 1000) {
+                message.success('上传成功');
+                this.setState({ modalVisible: false })
+                this.props.hanldeGetTableDate();
+              } else {
+                message.error('上传失败');
+              }
+            })
+          });
         });
       }
     }
@@ -98,17 +169,24 @@ export default class PageContentMain extends React.Component {
   // 暂停任务
   pauseTask = (taskId) => {
     cos.pauseTask(taskId);
+    this.setState({ puaseTask: true })
   }
   // 重新开始任务
   restartTask = (taskId) => {
     cos.restartTask(taskId);
+    this.setState({
+      uploadSucc: false,
+      puaseTask: false,
+    })
   }
 
   componentDidMount() {
     console.log(this.props.formData, 'formdata------');
     console.log(this.props.file, 'file------');
 
-    this.startUpload(this.props.file);
+    if (this.props.file.name) {
+      this.startUpload(this.props.file);
+    }
   }
 
   // 打开删除已发布的包 模态框
@@ -129,11 +207,12 @@ export default class PageContentMain extends React.Component {
     })
   }
   // 立即发布确认模态框
-  handleConfirmPublishPackage = () => {
+  handleConfirmPublishPackage = (record) => {
     this.setState({
       modalVisible: true,
       title: '提示',
-      content: 'confirmPublishPackage'
+      content: 'confirmPublishPackage',
+      craftVerId: record.craftVerId
     })
   }
 
@@ -165,6 +244,36 @@ export default class PageContentMain extends React.Component {
           message.success('删除成功');
           this.setState({ modalVisible: false })
           this.props.hanldeGetTableDate();
+        } else {
+          message.error('删除失败');
+        }
+      })
+    });
+  }
+  // 确认发布
+  handlePublish = () => {
+    const params = {};
+    params.craftVerId = this.state.craftVerId
+    console.log(params);
+    // 发起请求
+    fetch('http://120.79.92.22:7888/vmgr/craft/craftPublish', {
+      method: 'POST',
+      hostname: '120.79.92.22',
+      port: 7888,
+      body: JSON.stringify(params),
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      }
+    }).then(res => {
+      res.json().then(data => {
+        // console.log(data);
+        if (data.code === 1000) {
+          message.success('发布成功');
+          this.setState({ modalVisible: false })
+          this.props.hanldeGetTableDate();
+        } else {
+          message.error('发布失败');
         }
       })
     });
@@ -208,12 +317,31 @@ export default class PageContentMain extends React.Component {
       dataIndex: 'package',
       align: 'center',
       render: (text, record) => {
-        return <div>
-          {record.isPublish === 0 ? <div>
-            <Progress percent={50} size="small" status="active" style={{ display: 'inline' }} />
-            <span className='blueTxt' className='marginRight10'>暂停</span>
-          </div> : <div>---</div>}
+        // console.log('record----', record)
+        // console.log(this.state.percent)
+        return <div className='pageContentMain'>
+          {record.isPublish === 0 && <div>
 
+            {this.props.formData.craftVerId === record.craftVerId && <div>
+              {this.state.percent < 1 ?
+                this.state.puaseTask ? <div>
+                  <span className='greyTxt marginRight10'>已暂停</span><span className='blueTxt' onClick={() => this.restartTask(this.state.taskId)}>继续上传</span>
+                </div> : <div>
+                    <Progress percent={parseInt(this.state.percent * 100)} size="small" status="active" style={{ display: 'inline' }} />
+                    <span className='blueTxt marginRight10' onClick={() => this.pauseTask(this.state.taskId)}>暂停</span>
+                  </div>
+                :
+                this.state.uploadSucc ? <div>
+                  <span className='marginRight10'>上传成功</span><span className='blueTxt' onClick={() => this.startUpload(this.props.file)}>重新上传</span>
+                </div> : <div>
+                    <span className='redTxt marginRight10'>上传失败</span><span className='blueTxt' onClick={() => this.startUpload(this.props.file)}>重新上传</span>
+                  </div>
+              }
+
+            </div>}
+            {this.props.formData.craftVerId !== record.craftVerId && <span className='blueTxt'>开始上传</span>}
+          </div>}
+          {record.isPublish === 1 && <div>---</div>}
         </div>
       }
     }, {
@@ -231,7 +359,7 @@ export default class PageContentMain extends React.Component {
         return <div className='blueTxt'>
           {record.isPublish === 0 && <span>
             <span className='blueTxt marginRight10'><Link to='/codecraft/edit'>编辑</Link></span>
-            <span className='blueTxt marginRight10' onClick={this.handleConfirmPublishPackage}>立即发布</span>
+            {this.state.uploadSucc && this.props.formData.craftVerId === record.craftVerId && <span className='blueTxt marginRight10' onClick={() => this.handleConfirmPublishPackage(record)}>立即发布</span>}
           </span>}
           <span className='blueTxt marginRight10' onClick={() => this.handleDeletePublishedPackage(record)}>删除</span>
         </div>
