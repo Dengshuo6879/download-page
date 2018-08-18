@@ -17,7 +17,7 @@ class ActiveFormForm extends React.Component {
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 3 },
+        sm: { span: 4 },
       },
     };
 

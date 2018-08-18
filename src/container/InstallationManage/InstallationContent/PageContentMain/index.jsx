@@ -241,8 +241,7 @@ export default class PageContentMain extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (JSON.stringify(nextProps.tableData) !== '{}') {
-      console.log(nextProps.tableData.rows, 'rows')
+    if (JSON.stringify(nextProps.tableData) !== '{}' && nextProps.file.name) {
       if (nextProps.tableData.rows.length > 0) {
         if (nextProps.tableData.rows[0].fileStatus === 0 && this.startUploadFlag) {
           this.startUpload(this.props.file);
