@@ -13,6 +13,7 @@ class EditPackageForm extends React.Component {
     filePath: '',
     file: {},
   }
+
   handleSubmit = () => {
     const { getFieldsValue, validateFields } = this.props.form;
     validateFields(
@@ -55,6 +56,8 @@ class EditPackageForm extends React.Component {
                  setTimeout(() => {
                   this.props.history.push('/codecraft', {data: data.data, file: this.state.file})
                 }, 1000)
+              } else {
+                message.error(`${data.message}, 请更改安装版本号`);
               }
              })
           });
@@ -70,6 +73,8 @@ class EditPackageForm extends React.Component {
 
   render() {
     const type = this.props.location.pathname.split('/')[2]; //获取路径
+    const {query} = this.props.location;
+    console.log(query)
 
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
@@ -97,8 +102,9 @@ class EditPackageForm extends React.Component {
           {getFieldDecorator('osType', {
             rules: [{
               required: true,
+              message: '安装包类型不能为空'
             }],
-            initialValue: type === 'edit' ? 'mac' : null
+            initialValue: type === 'edit' ? (query.osTypeStr === 'windows' ? '0' : query.osTypeStr === 'mac'? '1': null) : null
           })(
             <Select style={{ width: '100%' }}>
               <Option value='0'>Windows</Option>
@@ -113,8 +119,9 @@ class EditPackageForm extends React.Component {
           {getFieldDecorator('isForceUpdate', {
             rules: [{
               required: true,
+              message: '安装包属性不能为空'
             }],
-            initialValue: type === 'edit' ? 'force' : null
+            initialValue: type === 'edit' ? (query.isForceUpdateStr === '非强制更新' ? '0' : query.isForceUpdateStr === '强制更新' ? '1' : null) : null
           })(
             <Select style={{ width: '100%' }}>
               <Option value='0'>非强制更新</Option>
@@ -129,7 +136,9 @@ class EditPackageForm extends React.Component {
           {getFieldDecorator('versionNo', {
             rules: [{
               required: true,
-            }]
+              message: '安装版本号不能为空'
+            }],
+            initialValue: type === 'edit' ? query.versionNo : null
           })(
             <div>
               <Input placeholder='请输入安装包版本号' />
@@ -144,7 +153,9 @@ class EditPackageForm extends React.Component {
           {getFieldDecorator('description', {
             rules: [{
               required: true,
-            }]
+              message: '安装包特性不能为空'
+            }],
+            initialValue: type === 'edit' ? query.description : null
           })(
             <div>
               <TextArea rows={4} placeholder='请输入安装包描述' />
@@ -158,6 +169,7 @@ class EditPackageForm extends React.Component {
           {getFieldDecorator('filename', {
             rules: [{
               required: true,
+              message: '请选择安装包'
             }]
           })(
             <div>

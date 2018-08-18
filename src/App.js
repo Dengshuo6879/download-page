@@ -16,21 +16,21 @@ class App extends Component {
   }
   componentDidMount() {
     // 获取bucket
-    fetch('http://120.79.92.22:7888/vmgr/cos/getCraftConfig', {
-      method: 'GET',
-      hostname: '120.79.92.22',
-      port: 80,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      }
-    }).then(res => {
-      res.json().then(data => {
-          if(data.code === 1000) {
-            this.setState({ bucket: data.data.bucket })
-          }
-      })
-    });
+    // fetch('http://120.79.92.22:7888/vmgr/cos/getCraftConfig', {
+    //   method: 'GET',
+    //   hostname: '120.79.92.22',
+    //   port: 80,
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Access-Control-Allow-Origin": "*",
+    //   }
+    // }).then(res => {
+    //   res.json().then(data => {
+    //       if(data.code === 1000) {
+    //         this.setState({ bucket: data.data.bucket })
+    //       }
+    //   })
+    // });
   }
 
   render() {
