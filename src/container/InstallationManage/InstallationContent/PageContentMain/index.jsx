@@ -125,7 +125,6 @@ export default class PageContentMain extends React.Component {
           fetch('http://120.79.92.22/vmgr/craft/craftCallback', {
             method: 'POST',
             hostname: '120.79.92.22',
-            port: 7888,
             body: formData,
             headers: {
               // "Content-Type": "application/json",
@@ -202,7 +201,6 @@ export default class PageContentMain extends React.Component {
           fetch('http://120.79.92.22/vmgr/craft/craftCallback', {
             method: 'POST',
             hostname: '120.79.92.22',
-            port: 7888,
             body: formData,
             headers: {
               // "Content-Type": "application/json",
@@ -389,17 +387,17 @@ export default class PageContentMain extends React.Component {
                     </div>
                   :
                   this.state.uploadSucc ? <div>
-                    <span className='marginRight10'>上传成功</span><span className='blueTxt' onClick={() => this.startUpload(this.props.file)}>重新上传</span>
+                    <span className='marginRight10'>上传成功</span>
                   </div> : <div>
                       <span className='redTxt marginRight10'>上传失败</span><span className='blueTxt' onClick={() => this.startUpload(this.props.file)}>重新上传</span>
                     </div>
                 }
               </div> : <div>
-                  {record.fileStatus === 0 && <span>上传失败</span>}
+                  {record.fileStatus === 0 || record.fileStatus === 3 && <span>上传失败</span>}
                   {record.fileStatus === 1 && <span>上传成功</span>}
                 </div>}
             </div> : <div>
-              {record.fileStatus === 0 && <span>上传失败</span>}
+              {record.fileStatus === 0 || record.fileStatus === 3 && <span>上传失败</span>}
               {record.fileStatus === 1 && <span>上传成功</span>}
             </div>
           }
