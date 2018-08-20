@@ -67,7 +67,7 @@ export default class PageContentHeader extends React.Component {
           <ActionForm obj={obj} layout={layout} ref={this.onActiveForm} hanldeGetTableDate={this.props.hanldeGetTableDate} />
         </Col>
 
-        <Col span={2} offset={4}>
+        <Col span={2} offset={3}>
           <Button type="primary" ghost><Icon type="plus" /><Link to='/codecraft/upload'>上传安装包</Link></Button>
         </Col>
       </Row>
