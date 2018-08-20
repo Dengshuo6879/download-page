@@ -17,11 +17,6 @@ export default class PageContent extends React.Component {
   }
   componentDidMount () {
     this.hanldeGetTableDate();
-    const userName = localStorage.getItem('userName');
-    console.log(userName);
-    if(!userName) {
-      // this.props.history.push('/codecraft/login');
-    }
   }
 
   // 获取table数据

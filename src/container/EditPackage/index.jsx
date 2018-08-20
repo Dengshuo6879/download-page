@@ -13,6 +13,12 @@ class EditPackageForm extends React.Component {
     filePath: '',
     file: {},
   }
+  componentDidMount() {
+    const userName = localStorage.getItem('userName');
+    if (!userName) {
+      this.props.history.push('/codecraft/login');
+    }
+  }
 
   handleSubmit = () => {
     const { getFieldsValue, validateFields } = this.props.form;
