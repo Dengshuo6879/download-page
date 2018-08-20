@@ -122,7 +122,7 @@ export default class PageContentMain extends React.Component {
 
 
           // 上传的回调
-          fetch('http://120.79.92.22:7888/vmgr/craft/craftCallback', {
+          fetch('http://120.79.92.22/vmgr/craft/craftCallback', {
             method: 'POST',
             hostname: '120.79.92.22',
             port: 7888,
@@ -199,7 +199,7 @@ export default class PageContentMain extends React.Component {
 
           // console.log('formdata-------------', formData)
           // 上传的回调
-          fetch('http://120.79.92.22:7888/vmgr/craft/craftCallback', {
+          fetch('http://120.79.92.22/vmgr/craft/craftCallback', {
             method: 'POST',
             hostname: '120.79.92.22',
             port: 7888,
@@ -282,7 +282,7 @@ export default class PageContentMain extends React.Component {
 
   // 确认删除
   handleDelete = () => {
-    fetch(`http://120.79.92.22:7888/vmgr/craft/craftPackage?craftVerId=${this.state.craftVerId}`, {
+    fetch(`http://120.79.92.22/vmgr/craft/craftPackage?craftVerId=${this.state.craftVerId}`, {
       method: 'DELETE',
       hostname: '120.79.92.22',
       port: 7888,
@@ -295,6 +295,11 @@ export default class PageContentMain extends React.Component {
         if (data.code === 1000) {
           message.success('删除成功');
           this.setState({ modalVisible: false })
+          if(this.props.tableData.rows.length === 1) {
+            this.setState({
+              pageNum: this.state.pageNum -1
+            })
+          }
           this.props.hanldeGetTableDate();
         } else {
           message.error('删除失败');
@@ -309,7 +314,7 @@ export default class PageContentMain extends React.Component {
     let formData = new FormData();
     formData.append("craftVerId", this.state.craftVerId);
     // 发起请求
-    fetch('http://120.79.92.22:7888/vmgr/craft/craftPublish', {
+    fetch('http://120.79.92.22/vmgr/craft/craftPublish', {
       method: 'POST',
       hostname: '120.79.92.22',
       port: 7888,
