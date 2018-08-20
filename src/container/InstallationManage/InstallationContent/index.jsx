@@ -31,7 +31,7 @@ export default class PageContent extends React.Component {
     param.pageNum = pageValues.pageNum;
     param.pageSize = pageValues.pageSize;
     this.setState({ params: param }, () => {
-      const path = `http://120.79.92.22/vmgr/craft/craftPackages?${stringify(this.state.params)}`;
+      const path = `http://120.79.92.22:7888/vmgr/craft/craftPackages?${stringify(this.state.params)}`;
       fetch(path, {
         method: 'GET',
         hostname: '120.79.92.22',
