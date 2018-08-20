@@ -39,7 +39,7 @@ class EditPackageForm extends React.Component {
           }
 
           // 发起请求
-          fetch('http://120.79.92.22/vmgr/craft/craftPackage', {
+          fetch('http://120.79.92.22/vmgr/craft/v/craftPackage', {
             method: 'PUT',
             hostname: '120.79.92.22',
             port: 7888,

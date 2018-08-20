@@ -45,20 +45,6 @@ export default class PageContentHeader extends React.Component {
         val: '0',
         txt: 'Windows'
       }]
-    }, {
-      type: 'select',
-      defaultValue: 'all',
-      labelTxt: 'isPublish',
-      opt: [{
-        val: 'all',
-        txt: '全部状态'
-      }, {
-        val: '1',
-        txt: '已发布'
-      }, {
-        val: '0',
-        txt: '未发布'
-      }]
     }];
     const layout = 'inline';
     return <div style={{marginBottom: '20px'}}>
