@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React from 'react';
 import { Table, Progress, Modal, message } from 'antd';
-import { Link } from 'react-router-dom';
 import './style.less';
 import { stringify } from 'querystring';
 
@@ -149,81 +148,81 @@ export default class PageContentMain extends React.Component {
       //     });
       //   });
       // } else {
-        cos.putObject({
-          Bucket: config.Bucket,
-          Region: config.Region,
-          Key: `${osType}/${fileName}`,
-          Body: file,
-          TaskReady: (taskId) => {
-            // console.log('taskId---', taskId)
-            this.setState({ taskId })
-          },
-          onProgress: (progressData) => {
-            // console.log('onProgress', JSON.parse(JSON.stringify(progressData)).percent);
-            const percent = JSON.parse(JSON.stringify(progressData)).percent;
-            this.setState({ percent, showProgress: true })
+      cos.putObject({
+        Bucket: config.Bucket,
+        Region: config.Region,
+        Key: `${osType}/${fileName}`,
+        Body: file,
+        TaskReady: (taskId) => {
+          // console.log('taskId---', taskId)
+          this.setState({ taskId })
+        },
+        onProgress: (progressData) => {
+          // console.log('onProgress', JSON.parse(JSON.stringify(progressData)).percent);
+          const percent = JSON.parse(JSON.stringify(progressData)).percent;
+          this.setState({ percent, showProgress: true })
 
-            // uploadProgress.percent = percent;
-            // if (percent !== 1) {
-            //   uploadProgress.progressVisible = true;
-            // } else {
-            //   uploadProgress.progressVisible = false;
-            // }
-            // console.log('uploadProgress----', uploadProgress)
-            // this.setState({ uploadProgress })
+          // uploadProgress.percent = percent;
+          // if (percent !== 1) {
+          //   uploadProgress.progressVisible = true;
+          // } else {
+          //   uploadProgress.progressVisible = false;
+          // }
+          // console.log('uploadProgress----', uploadProgress)
+          // this.setState({ uploadProgress })
 
+        }
+      }, (err, data) => {
+        console.log(err || data);
+        this.setState({ showProgress: false })
+        const params = {};
+        params.craftVerId = this.props.formData.craftVerId;
+
+        params.key = `${osType}/${fileName}`;
+
+        if (err) {
+          console.log('upload err -----')
+          this.setState({ uploadSucc: false });
+          params.uploadStatus = '0';
+        } else {
+          console.log('upload suc')
+          this.setState({ uploadSucc: true });
+          params.uploadStatus = '1';
+        }
+
+        // console.log(params, '--------')
+        // console.log(JSON.stringify(params))
+        let formData = new FormData();
+        formData.append("craftVerId", params.craftVerId);
+        formData.append("key", params.key);
+        formData.append("uploadStatus", params.uploadStatus);
+
+
+        // console.log('formdata-------------', formData)
+        // 上传的回调
+        fetch('http://120.79.92.22/vmgr/craft/v/craftCallback', {
+          method: 'POST',
+          hostname: '120.79.92.22',
+          body: formData,
+          headers: {
+            // "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
           }
-        }, (err, data) => {
-          console.log(err || data);
-          this.setState({ showProgress: false })
-          const params = {};
-          params.craftVerId = this.props.formData.craftVerId;
-
-          params.key = `${osType}/${fileName}`;
-
-          if (err) {
-            console.log('upload err -----')
-            this.setState({ uploadSucc: false });
-            params.uploadStatus = '0';
-          } else {
-            console.log('upload suc')
-            this.setState({ uploadSucc: true });
-            params.uploadStatus = '1';
-          }
-
-          // console.log(params, '--------')
-          // console.log(JSON.stringify(params))
-          let formData = new FormData();
-          formData.append("craftVerId", params.craftVerId);
-          formData.append("key", params.key);
-          formData.append("uploadStatus", params.uploadStatus);
-
-
-          // console.log('formdata-------------', formData)
-          // 上传的回调
-          fetch('http://120.79.92.22/vmgr/craft/v/craftCallback', {
-            method: 'POST',
-            hostname: '120.79.92.22',
-            body: formData,
-            headers: {
-              // "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*",
+        }).then(res => {
+          res.json().then(data => {
+            console.log(data);
+            if (data.code === 1000 && params.uploadStatus === '1') {
+              message.success('上传成功');
+              this.setState({ modalVisible: false })
+            } else {
+              message.error('上传失败');
             }
-          }).then(res => {
-            res.json().then(data => {
-              console.log(data);
-              if (data.code === 1000) {
-                message.success('开始上传');
-                this.setState({ modalVisible: false })
-                setTimeout(() => {
-                  this.props.hanldeGetTableDate();
-                }, 1000)
-              } else {
-                message.error('上传失败');
-              }
-            })
-          });
+            setTimeout(() => {
+              this.props.hanldeGetTableDate();
+            }, 1000)
+          })
         });
+      });
       // }
     }
   }
@@ -242,7 +241,7 @@ export default class PageContentMain extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (JSON.stringify(nextProps.tableData) !== '{}' && nextProps.file.name) {
+    if (JSON.stringify(nextProps.tableData) !== '{}' && this.props.file) {
       if (nextProps.tableData.rows.length > 0) {
         if (nextProps.tableData.rows[0].fileStatus === 0 && this.startUploadFlag) {
           this.startUpload(this.props.file);
@@ -296,9 +295,9 @@ export default class PageContentMain extends React.Component {
         if (data.code === 1000) {
           message.success('删除成功');
           this.setState({ modalVisible: false })
-          if(this.props.tableData.rows.length === 1) {
+          if (this.props.tableData.rows.length === 1) {
             this.setState({
-              pageNum: this.state.pageNum -1
+              pageNum: this.state.pageNum - 1
             })
           }
           this.props.hanldeGetTableDate();
@@ -342,17 +341,20 @@ export default class PageContentMain extends React.Component {
       title: '安装包版本号',
       dataIndex: 'versionNo',
       key: 'versionNo',
-      align: 'center'
+      align: 'center',
+      width: '150px',
     }, {
       title: '版本特性',
       dataIndex: 'description',
       key: 'description',
-      align: 'center'
+      align: 'center',
+      width: '300px',
     }, {
       title: '更新时间',
       dataIndex: 'updateTime',
       key: 'updateTime',
-      align: 'center'
+      align: 'center',
+      width: '200px'
     }, {
       title: '安装包属性',
       key: 'isForceUpdateStr',
@@ -375,6 +377,7 @@ export default class PageContentMain extends React.Component {
       key: 'package',
       dataIndex: 'package',
       align: 'center',
+      width: '250px',
       render: (text, record) => {
         // console.log(this.state.percent)
         return <div className='pageContentMain'>
@@ -382,12 +385,9 @@ export default class PageContentMain extends React.Component {
             <div>
               {this.state.showProgress ? <div>
                 {this.state.percent < 1 ?
-                  this.state.puaseTask ? <div>
-                    <span className='greyTxt marginRight10'>已暂停</span><span className='blueTxt' onClick={() => this.restartTask(this.state.taskId)}>继续上传</span>
-                  </div> : <div>
-                      <Progress percent={parseInt(this.state.percent * 100)} size="small" status="active" style={{ display: 'inline' }} />
-                      <span className='blueTxt marginRight10' onClick={() => this.pauseTask(this.state.taskId)}>暂停</span>
-                    </div>
+                  <div>
+                    <Progress percent={parseInt(this.state.percent * 100)} size="small" status="active" style={{ display: 'inline' }} />
+                  </div>
                   :
                   this.state.uploadSucc ? <div>
                     <span className='marginRight10'>上传成功</span>

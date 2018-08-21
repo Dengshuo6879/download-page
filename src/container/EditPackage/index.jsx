@@ -58,7 +58,7 @@ class EditPackageForm extends React.Component {
             res.json().then(data => {
               // console.log(data);
               if(data.code === 1000) {
-                message.success('上传成功！')
+                message.success('开始上传')
                  setTimeout(() => {
                   this.props.history.push('/codecraft', {data: data.data, file: this.state.file})
                 }, 1000)
