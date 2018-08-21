@@ -13,6 +13,8 @@ export default class InstallationHeader extends React.Component {
       this.setState({
         userName: userName
       })
+    } else {
+      document.getElementById('toLogin').click();
     }
   }
 
@@ -47,11 +49,11 @@ export default class InstallationHeader extends React.Component {
         </Col>
         {
           this.state.userName !== '' ? <Col span={6} offset={16} className='welcomeExit'>
-            欢迎你， <span className='userName'>{this.state.userName}</span>
+            欢迎你，<span className='userName'>{this.state.userName}</span>
             <span className='exitLogin' onClick={this.handleLoginOut}>退出</span>
             <Link to='/codecraft/login' id='toLogin'></Link>
           </Col> : <Col span={6} offset={16} className='welcomeExit'>
-              <span className='exitLogin'><Link to='/codecraft/login'>请登录</Link></span>
+              <span className='exitLogin'><Link to='/codecraft/login' id='toLogin'>请登录</Link></span>
           </Col>
         }
       </Row>

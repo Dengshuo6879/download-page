@@ -57,9 +57,7 @@ export default class PageContentMain extends React.Component {
 
     taskId: 0,
     percent: 0,
-    uploadSucc: false,
-    puaseTask: false,
-    showProgress: false,
+    showStatus: '',
   }
 
   // 开始上传
@@ -107,11 +105,9 @@ export default class PageContentMain extends React.Component {
 
       //     if (err) {
       //       console.log('upload err -----')
-      //       this.setState({ uploadSucc: false });
       //       params.uploadStatus = '0';
       //     } else {
       //       console.log('upload suc')
-      //       this.setState({ uploadSucc: true });
       //       params.uploadStatus = '1';
       //     }
 
@@ -160,7 +156,7 @@ export default class PageContentMain extends React.Component {
         onProgress: (progressData) => {
           // console.log('onProgress', JSON.parse(JSON.stringify(progressData)).percent);
           const percent = JSON.parse(JSON.stringify(progressData)).percent;
-          this.setState({ percent, showProgress: true })
+          this.setState({ percent, showStatus: 'progressing' })
 
           // uploadProgress.percent = percent;
           // if (percent !== 1) {
@@ -174,7 +170,6 @@ export default class PageContentMain extends React.Component {
         }
       }, (err, data) => {
         console.log(err || data);
-        this.setState({ showProgress: false })
         const params = {};
         params.craftVerId = this.props.formData.craftVerId;
 
@@ -182,11 +177,11 @@ export default class PageContentMain extends React.Component {
 
         if (err) {
           console.log('upload err -----')
-          this.setState({ uploadSucc: false });
+          this.setState({ showStatus: 'err' });
           params.uploadStatus = '0';
         } else {
           console.log('upload suc')
-          this.setState({ uploadSucc: true });
+          this.setState({ showStatus: 'suc' });
           params.uploadStatus = '1';
         }
 
@@ -229,18 +224,14 @@ export default class PageContentMain extends React.Component {
   // 暂停任务
   pauseTask = (taskId) => {
     cos.pauseTask(taskId);
-    this.setState({ puaseTask: true })
   }
   // 重新开始任务
   restartTask = (taskId) => {
     cos.restartTask(taskId);
-    this.setState({
-      uploadSucc: false,
-      puaseTask: false,
-    })
   }
 
   componentWillReceiveProps(nextProps) {
+    // console.log(this.props.formData, 'formdata-----')
     if (JSON.stringify(nextProps.tableData) !== '{}' && this.props.file) {
       if (nextProps.tableData.rows.length > 0) {
         if (nextProps.tableData.rows[0].fileStatus === 0 && this.startUploadFlag) {
@@ -285,7 +276,6 @@ export default class PageContentMain extends React.Component {
     fetch(`http://120.79.92.22/vmgr/craft/v/craftPackage?craftVerId=${this.state.craftVerId}`, {
       method: 'DELETE',
       hostname: '120.79.92.22',
-      port: 7888,
       headers: {
         // "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
@@ -376,30 +366,25 @@ export default class PageContentMain extends React.Component {
       key: 'package',
       dataIndex: 'package',
       align: 'center',
-      width: '250px',
+      width: '200px',
       render: (text, record) => {
         // console.log(this.state.percent)
         return <div className='pageContentMain'>
-          {this.props.formData.craftVerId === record.craftVerId ?
+          {this.props.formData.craftVerId && (this.props.formData.craftVerId === record.craftVerId) ?
             <div>
-              {this.state.showProgress ? <div>
-                {this.state.percent < 1 ?
-                  <div>
-                    <Progress percent={parseInt(this.state.percent * 100)} size="small" status="active" style={{ display: 'inline' }} />
-                  </div>
-                  :
-                  this.state.uploadSucc ? <div>
-                    <span className='marginRight10'>上传成功</span>
-                  </div> : <div>
-                      <span className='redTxt marginRight10'>上传失败</span><span className='blueTxt' onClick={() => this.startUpload(this.props.file)}>重新上传</span>
-                    </div>
-                }
-              </div> : <div>
-                  {record.fileStatus === 0 || record.fileStatus === 3 && <span>上传失败</span>}
-                  {record.fileStatus === 1 && <span>上传成功</span>}
-                </div>}
-            </div> : <div>
-              {record.fileStatus === 0 || record.fileStatus === 3 && <span>上传失败</span>}
+              {this.state.showStatus === 'progressing' && <Progress percent={parseInt(this.state.percent * 100)} size="small" status="active" style={{ display: 'inline' }} />}
+              {this.state.showStatus === 'err' && <div>
+                <span className='redTxt marginRight10'>上传失败</span><span className='blueTxt' onClick={() => this.startUpload(this.props.file)}>重新上传</span>
+              </div>}
+              {this.state.showStatus === 'suc' && <span>上传成功</span>}
+              {this.state.showStatus === '' && <div>
+                {(record.fileStatus === 0 || record.fileStatus === 3) && <span></span>}
+                {record.fileStatus === 1 && <span>上传成功</span>}
+              </div>}
+            </div>
+            :
+            <div>
+              {(record.fileStatus === 0 || record.fileStatus === 3) && <span>上传失败</span>}
               {record.fileStatus === 1 && <span>上传成功</span>}
             </div>
           }

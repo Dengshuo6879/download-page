@@ -7,15 +7,10 @@ const SubMenu = Menu.SubMenu;
 
 export default class InstallationManage extends React.Component {
   formData = {};
-  file = {};
+  file = '';
 
   componentWillMount() {
     // console.log('页面跳转传参--', this.props.location.state);
-    const userName = localStorage.getItem('userName');
-    if (!userName) {
-      this.props.history.push('/codecraft/login');
-    }
-
     if (this.props.location.state) {
       this.formData = this.props.location.state.data;
       this.file = this.props.location.state.file;

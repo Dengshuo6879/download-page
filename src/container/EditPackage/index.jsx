@@ -12,12 +12,6 @@ class EditPackageForm extends React.Component {
     filePath: '',
     file: {},
   }
-  componentDidMount() {
-    const userName = localStorage.getItem('userName');
-    if (!userName) {
-      this.props.history.push('/codecraft/login');
-    }
-  }
 
   handleSubmit = () => {
     const { getFieldsValue, validateFields } = this.props.form;
@@ -47,7 +41,6 @@ class EditPackageForm extends React.Component {
           fetch('http://120.79.92.22/vmgr/craft/v/craftPackage', {
             method: 'PUT',
             hostname: '120.79.92.22',
-            port: 7888,
             body: JSON.stringify(params),
             headers: {
               "Content-Type": "application/json",

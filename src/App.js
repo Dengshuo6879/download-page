@@ -44,17 +44,18 @@ class App extends Component {
         <Router>
           <Switch>
             <Route path='/codecraft/login' exact component={Login} />
+
             <div>
               <InstallationHeader />
               <Router>
                 <Switch>
                   <Route path='/codecraft' exact component={InstallationManage} />
-                  <Route path='/codecraft/:type' exact component={EditPackage} />
+                  <Route path='/codecraft/:type' component={EditPackage} />
                 </Switch>
               </Router>
             </div>
 
-            <Redirect to='/codecraft/login' />
+            {/* <Redirect exact to='/codecraft/login' /> */}
 
           </Switch>
         </Router>
