@@ -5,7 +5,11 @@ import {
   Switch,
   Route,
   Redirect
-} from "react-router-dom"
+} from "react-router-dom";
+import { LocaleProvider } from 'antd';
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import 'moment/locale/zh-cn';
+
 import InstallationHeader from './container/InstallationHeader';
 import InstallationManage from './container/InstallationManage';
 import EditPackage from './container/EditPackage';
@@ -35,20 +39,27 @@ class App extends Component {
   }
 
   render() {
-    return (
+    return (<LocaleProvider locale={zh_CN}>
       <div className="App">
-        <InstallationHeader />
         <Router>
           <Switch>
             <Route path='/codecraft/login' exact component={Login} />
-            <Route path='/codecraft' exact component={InstallationManage} />
-            <Route path='/codecraft/:type' exact component={EditPackage} />
+            <div>
+              <InstallationHeader />
+              <Router>
+                <Switch>
+                  <Route path='/codecraft' exact component={InstallationManage} />
+                  <Route path='/codecraft/:type' exact component={EditPackage} />
+                </Switch>
+              </Router>
+            </div>
 
             <Redirect to='/codecraft/login' />
+
           </Switch>
         </Router>
       </div>
-    );
+    </LocaleProvider>);
   }
 }
 

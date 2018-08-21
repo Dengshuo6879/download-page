@@ -1,6 +1,5 @@
 import React from 'react';
 import { Form, Button, Input, Select, message, Row, Col } from 'antd';
-import $ from 'jquery';
 import { Link } from 'react-router-dom';
 
 const FormItem = Form.Item;
@@ -63,7 +62,7 @@ class EditPackageForm extends React.Component {
                   this.props.history.push('/codecraft', {data: data.data, file: this.state.file})
                 }, 1000)
               } else {
-                message.error(`${data.message}, 请更改安装版本号`);
+                message.error(data.message);
               }
              })
           });
@@ -179,20 +178,13 @@ class EditPackageForm extends React.Component {
             }]
           })(
             <div>
-              {/* <Dragger {...props} disabled={this.state.disabled}>
-                <p className="ant-upload-drag-icon">
-                  <Icon type="inbox" />
-                </p>
-                <p className="ant-upload-text">点击或拖拽文件到此区域进行添加</p>
-                <p>（大小XXKB以内，XXX格式）</p>
-              </Dragger> */}
-              <input type='file' name='file' id='file' onChange={this.handleFileChange} />
+            <input type='file' name='file' id='file' onChange={this.handleFileChange} accept=".WMV, .WM, .ASF, .ASX, .RM, .RMVB, .RA, .RAM, .MPG, .MPEG, .MPE, .VOB, .DAT, .MOV, .3GP, .MP4, .MP4V, .M4V, .MKV, .AVI, .FLV, .F4V, .dmg, .exe" />
             </div>
           )}
         </FormItem>
         <FormItem>
           <div style={{ textAlign: 'center', marginTop: '40px' }}>
-            <Button style={{ marginRight: 50 }}><Link to='/'>取消</Link></Button>
+            <Button style={{ marginRight: 50 }}><Link to='/codecraft'>取消</Link></Button>
             <Button type='primary' htmlType="submit" onClick={this.handleSubmit}>提交</Button>
           </div>
         </FormItem>

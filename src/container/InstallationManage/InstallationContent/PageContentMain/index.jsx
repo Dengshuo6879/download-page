@@ -317,7 +317,6 @@ export default class PageContentMain extends React.Component {
     fetch('http://120.79.92.22/vmgr/craft/craftPublish', {
       method: 'POST',
       hostname: '120.79.92.22',
-      port: 7888,
       body: formData,
       headers: {
         // "Content-Type": "application/json",
