@@ -67,159 +67,158 @@ export default class PageContentMain extends React.Component {
     const fileName = file.name;
     // const uploadProgress = this.state.uploadProgress;
     if (file) {
-      // if (file.size > 100 * 1024 * 1024) {
-      //   cos.sliceUploadFile({
-      //     Bucket: config.Bucket,
-      //     Region: config.Region,
-      //     Key: `${osType}/${fileName}`,
-      //     Body: file,
-      //     Parts: [
-      //       { PartNumber: '1', ETag: '"0cce40bdbaf2fa0ff204c20fc965dd3f"' },
-      //     ],
-      //     TaskReady: (taskId) => {
-      //       // console.log('taskId--', taskId);
-      //       // uploadProgress.taskId = taskId;
-      //       this.setState({ taskId })
-      //     },
-      //     onProgress: (progressData) => {
-      //       // console.log('onProgress', JSON.parse(JSON.stringify(progressData)).percent);
-      //       const percent = JSON.parse(JSON.stringify(progressData)).percent;
-      //       this.setState({ percent, showProgress: true })
+      if (file.size > 100 * 1024 * 1024) {
+        cos.sliceUploadFile({
+          Bucket: config.Bucket,
+          Region: config.Region,
+          Key: `${osType}/${fileName}`,
+          Body: file,
+          TaskReady: (taskId) => {
+            // console.log('taskId--', taskId);
+            // uploadProgress.taskId = taskId;
+            this.setState({ taskId })
+          },
+          onProgress: (progressData) => {
+            // console.log('onProgress', JSON.parse(JSON.stringify(progressData)).percent);
+            const percent = JSON.parse(JSON.stringify(progressData)).percent;
+            this.setState({ percent, showProgress: true })
 
 
-      //       // uploadProgress.percent = percent;
-      //       // if(percent !== 1) {
-      //       //   uploadProgress.progressVisible = true;
-      //       // } else {
-      //       //   uploadProgress.progressVisible = false;
-      //       // }
-      //       // console.log('uploadProgress----', uploadProgress)
-      //       // this.setState({ uploadProgress });
-      //     }
-      //   }, (err, data) => {
-      //     console.log(err || data);
-      //     this.setState({ showProgress: false });
-      //     const params = {};
-      //     params.craftVerId = this.props.formData.craftVerId;
-
-      //     params.key = `${osType}/${fileName}`;
-
-      //     if (err) {
-      //       console.log('upload err -----')
-      //       params.uploadStatus = '0';
-      //     } else {
-      //       console.log('upload suc')
-      //       params.uploadStatus = '1';
-      //     }
-
-      //     // console.log(params, '--------')
-      //     // console.log(JSON.stringify(params))
-      //     let formData = new FormData();
-      //     formData.append("craftVerId", params.craftVerId);
-      //     formData.append("key", params.key);
-      //     formData.append("uploadStatus", params.uploadStatus);
-
-
-      //     // 上传的回调
-      //     fetch(`${commonUrl}/craft/craftCallback`, {
-      //       method: 'POST',
-      //       hostname: '120.79.92.22',
-      //       body: formData,
-      //       headers: {
-      //         // "Content-Type": "application/json",
-      //         "Access-Control-Allow-Origin": "*",
-      //       }
-      //     }).then(res => {
-      //       res.json().then(data => {
-      //         console.log(data);
-      //         if (data.code === 1000) {
-      //           message.success('上传成功');
-      //           this.setState({ modalVisible: false })
-      //           setTimeout(() => {
-      //             this.props.hanldeGetTableDate();
-      //           }, 1000)
-      //         } else {
-      //           message.error('上传失败');
-      //         }
-      //       })
-      //     });
-      //   });
-      // } else {
-      cos.putObject({
-        Bucket: config.Bucket,
-        Region: config.Region,
-        Key: `${osType}/${fileName}`,
-        Body: file,
-        TaskReady: (taskId) => {
-          // console.log('taskId---', taskId)
-          this.setState({ taskId })
-        },
-        onProgress: (progressData) => {
-          // console.log('onProgress', JSON.parse(JSON.stringify(progressData)).percent);
-          const percent = JSON.parse(JSON.stringify(progressData)).percent;
-          this.setState({ percent, showStatus: 'progressing' })
-
-          // uploadProgress.percent = percent;
-          // if (percent !== 1) {
-          //   uploadProgress.progressVisible = true;
-          // } else {
-          //   uploadProgress.progressVisible = false;
-          // }
-          // console.log('uploadProgress----', uploadProgress)
-          // this.setState({ uploadProgress })
-
-        }
-      }, (err, data) => {
-        console.log(err || data);
-        const params = {};
-        params.craftVerId = this.props.formData.craftVerId;
-
-        params.key = `${osType}/${fileName}`;
-
-        if (err) {
-          console.log('upload err -----')
-          this.setState({ showStatus: 'err' });
-          params.uploadStatus = '0';
-        } else {
-          console.log('upload suc')
-          this.setState({ showStatus: 'suc' });
-          params.uploadStatus = '1';
-        }
-
-        // console.log(params, '--------')
-        // console.log(JSON.stringify(params))
-        let formData = new FormData();
-        formData.append("craftVerId", params.craftVerId);
-        formData.append("key", params.key);
-        formData.append("uploadStatus", params.uploadStatus);
-
-
-        // console.log('formdata-------------', formData)
-        // 上传的回调
-        fetch(`${commonUrl}/craft/v/craftCallback`, {
-          method: 'POST',
-          hostname: '120.79.92.22',
-          body: formData,
-          headers: {
-            // "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
+            // uploadProgress.percent = percent;
+            // if(percent !== 1) {
+            //   uploadProgress.progressVisible = true;
+            // } else {
+            //   uploadProgress.progressVisible = false;
+            // }
+            // console.log('uploadProgress----', uploadProgress)
+            // this.setState({ uploadProgress });
           }
-        }).then(res => {
-          res.json().then(data => {
-            console.log(data);
-            if (data.code === 1000 && params.uploadStatus === '1') {
-              message.success('上传成功');
-              this.setState({ modalVisible: false })
-            } else {
-              message.error('上传失败');
+        }, (err, data) => {
+          console.log(err || data);
+          const params = {};
+          params.craftVerId = this.props.formData.craftVerId;
+
+          params.key = `${osType}/${fileName}`;
+
+          if (err) {
+            console.log('upload err -----')
+            this.setState({ showStatus: 'err' });
+            params.uploadStatus = '0';
+          } else {
+            console.log('upload suc')
+            this.setState({ showStatus: 'suc' });
+            params.uploadStatus = '1';
+          }
+
+          // console.log(params, '--------')
+          // console.log(JSON.stringify(params))
+          let formData = new FormData();
+          formData.append("craftVerId", params.craftVerId);
+          formData.append("key", params.key);
+          formData.append("uploadStatus", params.uploadStatus);
+
+
+          // console.log('formdata-------------', formData)
+          // 上传的回调
+          fetch(`${commonUrl}/craft/v/craftCallback`, {
+            method: 'POST',
+            hostname: '120.79.92.22',
+            body: formData,
+            headers: {
+              // "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
             }
-            setTimeout(() => {
-              this.props.hanldeGetTableDate();
-            }, 1000)
-          })
+          }).then(res => {
+            res.json().then(data => {
+              console.log(data);
+              if (data.code === 1000 && params.uploadStatus === '1') {
+                message.success('上传成功');
+                this.setState({ modalVisible: false })
+              } else {
+                message.error('上传失败');
+              }
+              setTimeout(() => {
+                this.props.hanldeGetTableDate();
+              }, 1000)
+            })
+          });
         });
-      });
-      // }
+      } else {
+        cos.putObject({
+          Bucket: config.Bucket,
+          Region: config.Region,
+          Key: `${osType}/${fileName}`,
+          Body: file,
+          TaskReady: (taskId) => {
+            // console.log('taskId---', taskId)
+            this.setState({ taskId })
+          },
+          onProgress: (progressData) => {
+            // console.log('onProgress', JSON.parse(JSON.stringify(progressData)).percent);
+            const percent = JSON.parse(JSON.stringify(progressData)).percent;
+            this.setState({ percent, showStatus: 'progressing' })
+
+            // uploadProgress.percent = percent;
+            // if (percent !== 1) {
+            //   uploadProgress.progressVisible = true;
+            // } else {
+            //   uploadProgress.progressVisible = false;
+            // }
+            // console.log('uploadProgress----', uploadProgress)
+            // this.setState({ uploadProgress })
+
+          }
+        }, (err, data) => {
+          console.log(err || data);
+          const params = {};
+          params.craftVerId = this.props.formData.craftVerId;
+
+          params.key = `${osType}/${fileName}`;
+
+          if (err) {
+            console.log('upload err -----')
+            this.setState({ showStatus: 'err' });
+            params.uploadStatus = '0';
+          } else {
+            console.log('upload suc')
+            this.setState({ showStatus: 'suc' });
+            params.uploadStatus = '1';
+          }
+
+          // console.log(params, '--------')
+          // console.log(JSON.stringify(params))
+          let formData = new FormData();
+          formData.append("craftVerId", params.craftVerId);
+          formData.append("key", params.key);
+          formData.append("uploadStatus", params.uploadStatus);
+
+
+          // console.log('formdata-------------', formData)
+          // 上传的回调
+          fetch(`${commonUrl}/craft/v/craftCallback`, {
+            method: 'POST',
+            hostname: '120.79.92.22',
+            body: formData,
+            headers: {
+              // "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            }
+          }).then(res => {
+            res.json().then(data => {
+              console.log(data);
+              if (data.code === 1000 && params.uploadStatus === '1') {
+                message.success('上传成功');
+                this.setState({ modalVisible: false })
+              } else {
+                message.error('上传失败');
+              }
+              setTimeout(() => {
+                this.props.hanldeGetTableDate();
+              }, 1000)
+            })
+          });
+        });
+      }
     }
   }
   // 暂停任务
