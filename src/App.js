@@ -9,6 +9,7 @@ import {
 import { LocaleProvider } from 'antd';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
+import { commonUrl } from './common/common';
 
 import InstallationHeader from './container/InstallationHeader';
 import InstallationManage from './container/InstallationManage';
@@ -21,7 +22,7 @@ class App extends Component {
   }
   componentDidMount() {
     // 获取bucket
-    // fetch('http://120.79.92.22/vmgr/cos/getCraftConfig', {
+    // fetch(`${commonUrl}/cos/getCraftConfig`, {
     //   method: 'GET',
     //   hostname: '120.79.92.22',
     //   port: 80,

@@ -1,0 +1,1 @@
+export const commonUrl = 'http://120.79.92.22/vmgr';

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Button, Input, Select, message, Row, Col } from 'antd';
 import { Link } from 'react-router-dom';
+import { commonUrl } from '../../common/common';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -38,7 +39,7 @@ class EditPackageForm extends React.Component {
           }
 
           // 发起请求
-          fetch('http://120.79.92.22/vmgr/craft/v/craftPackage', {
+          fetch(`${commonUrl}/craft/v/craftPackage`, {
             method: 'PUT',
             hostname: '120.79.92.22',
             body: JSON.stringify(params),

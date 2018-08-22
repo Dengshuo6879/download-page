@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input, Icon, message, Button, Row, Col } from 'antd';
+import { commonUrl } from '../../common/common';
 const FormItem = Form.Item;
 
 class LoginForm extends React.Component {
@@ -14,7 +15,7 @@ class LoginForm extends React.Component {
           formData.append("password", (params.password));
         
           // // 发起请求
-          fetch('http://120.79.92.22/vmgr/user/authentication', {
+          fetch(`${commonUrl}/user/authentication`, {
             method: 'POST',
             hostname: '120.79.92.22',
             body: formData,

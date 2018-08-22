@@ -2,6 +2,8 @@ import React from 'react';
 import { stringify } from 'querystring';
 import PageContentHeader from './PageContentHeader'
 import PageContentMain from './PageContentMain';
+import { message } from 'antd';
+import { commonUrl } from '../../../common/common';
 
 export default class PageContent extends React.Component {
   state = {
@@ -31,7 +33,7 @@ export default class PageContent extends React.Component {
     param.pageNum = pageValues.pageNum;
     param.pageSize = pageValues.pageSize;
     this.setState({ params: param }, () => {
-      const path = `http://120.79.92.22/vmgr/craft/v/craftPackages?${stringify(this.state.params)}`;
+      const path = `${commonUrl}/craft/v/craftPackages?${stringify(this.state.params)}`;
       fetch(path, {
         method: 'GET',
         hostname: '120.79.92.22',
@@ -45,6 +47,8 @@ export default class PageContent extends React.Component {
           if (data.code === 1000) {
             // console.log('table数据---', data.data)
             this.setState({ tableData: data.data })
+          } else {
+            message.error(data.message);
           }
         })
       });

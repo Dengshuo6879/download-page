@@ -3,6 +3,7 @@ import React from 'react';
 import { Table, Progress, Modal, message } from 'antd';
 import './style.less';
 import { stringify } from 'querystring';
+import { commonUrl } from '../../../../common/common';
 
 import COS from 'cos-js-sdk-v5';
 
@@ -17,7 +18,7 @@ const cos = new COS({
     var query = options.Query || {};
     var headers = options.Headers || {};
     var pathname = key.indexOf('/') === 0 ? key : '/' + key;
-    var url = 'http://120.79.92.22/vmgr/cos/getFileAuthorization';
+    var url = `${commonUrl}/cos/getFileAuthorization`;
     var xhr = new XMLHttpRequest();
     var data = {
       method: method,
@@ -120,7 +121,7 @@ export default class PageContentMain extends React.Component {
 
 
       //     // 上传的回调
-      //     fetch('http://120.79.92.22/vmgr/craft/craftCallback', {
+      //     fetch(`${commonUrl}/craft/craftCallback`, {
       //       method: 'POST',
       //       hostname: '120.79.92.22',
       //       body: formData,
@@ -195,7 +196,7 @@ export default class PageContentMain extends React.Component {
 
         // console.log('formdata-------------', formData)
         // 上传的回调
-        fetch('http://120.79.92.22/vmgr/craft/v/craftCallback', {
+        fetch(`${commonUrl}/craft/v/craftCallback`, {
           method: 'POST',
           hostname: '120.79.92.22',
           body: formData,
@@ -273,7 +274,7 @@ export default class PageContentMain extends React.Component {
 
   // 确认删除
   handleDelete = () => {
-    fetch(`http://120.79.92.22/vmgr/craft/v/craftPackage?craftVerId=${this.state.craftVerId}`, {
+    fetch(`${commonUrl}/craft/v/craftPackage?craftVerId=${this.state.craftVerId}`, {
       method: 'DELETE',
       hostname: '120.79.92.22',
       headers: {
@@ -304,7 +305,7 @@ export default class PageContentMain extends React.Component {
     let formData = new FormData();
     formData.append("craftVerId", this.state.craftVerId);
     // 发起请求
-    fetch('http://120.79.92.22/vmgr/craft/craftPublish', {
+    fetch(`${commonUrl}/craft/craftPublish`, {
       method: 'POST',
       hostname: '120.79.92.22',
       body: formData,

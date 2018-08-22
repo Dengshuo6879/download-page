@@ -2,6 +2,7 @@ import React from 'react';
 import './style.less';
 import { Row, Col, message } from 'antd';
 import  { Link } from 'react-router-dom';
+import { commonUrl } from '../../common/common';
 export default class InstallationHeader extends React.Component {
   state = {
     userName: '',
@@ -20,7 +21,7 @@ export default class InstallationHeader extends React.Component {
 
   // 退出登录
   handleLoginOut = () => {
-    fetch('http://120.79.92.22/vmgr/user/v/cancellation', {
+    fetch(`${commonUrl}/user/v/cancellation`, {
       method: 'POST',
       hostname: '120.79.92.22',
       headers: {
