@@ -56,7 +56,7 @@ class App extends Component {
               </Router>
             </div>
 
-            {/* <Redirect exact to='/codecraft/login' /> */}
+            <Redirect exact to='/codecraft/login' />
 
           </Switch>
         </Router>
